@@ -22,11 +22,11 @@ app.use(bodyParser.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
-app.use(
-  "/api-docs",
-  swagger.getSwaggerUi().serve,
-  swagger.getSwaggerUi().setup(swagger.getSpecs())
-);
+// app.use(
+//   "/api-docs",
+//   swagger.getSwaggerUi().serve,
+//   swagger.getSwaggerUi().setup(swagger.getSpecs())
+// );
 app.use("/api/v2/customers", customerRoutes);
 
 export default app;
