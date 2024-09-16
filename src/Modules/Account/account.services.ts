@@ -39,20 +39,6 @@ export default class AccountServices {
     return updatedAccount;
   }
 
-  public static async updateAccountAndReturnNew(
-    filter: any,
-    setPayload: any,
-    unSetPayload: any = undefined
-  ): Promise<any> {
-    const updatedAccount = await AccountRepository.updateOneAndReturnNew(
-      filter,
-      setPayload,
-      unSetPayload
-    );
-
-    return updatedAccount;
-  }
-
   public static async accountExists(filter: any): Promise<boolean> {
     const foundAccount = await AccountRepository.findOne(filter);
 

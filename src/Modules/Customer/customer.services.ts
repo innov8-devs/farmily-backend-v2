@@ -45,7 +45,7 @@ export default class CustomerServices {
       accountTypeId,
     });
 
-    await AccountServices.updateAccount(_id, { verificationToken });
+    await AccountServices.updateAccount({ _id }, { verificationToken });
 
     const currentClientHost = ClientHelper.getCurrentClient().landingPage;
     const verificationLink = `${currentClientHost}/auth/customer/verify-account/${verificationToken}`;
@@ -115,20 +115,17 @@ export default class CustomerServices {
       accountTypeId: foundAccount.accountTypeId,
     });
 
-    return token
+    return token;
   }
 
-  
-  // /** 
+  // /**
   public static async forgetCustomerPassword(
     data: ForgetCustomerPasswordInput
   ) {
-
     const foundAccount = await AccountServices.findAccount({
       email: data.email,
       accountType: "Customer",
     });
-
 
     if (foundAccount && foundAccount.resetToken) {
       const decodedResetToken = TokenHelper.verifyResetToken(
@@ -136,9 +133,7 @@ export default class CustomerServices {
       );
 
       if (decodedResetToken)
-        throw new ForbiddenException(
-          "ALREADY HAVE VALID RESET LINK"
-        );
+        throw new ForbiddenException("ALREADY HAVE VALID RESET LINK");
     }
 
     const resetToken = TokenHelper.generateResetToken({
@@ -162,9 +157,7 @@ export default class CustomerServices {
     return "CHECK MAIL BOX";
   }
 
-  public static async resetCustomerPassword(
-    data: ResetCustomerPasswordInput
-  ) {
+  public static async resetCustomerPassword(data: ResetCustomerPasswordInput) {
     const decodedResetToken = TokenHelper.verifyResetToken(data.resetToken);
 
     const foundAccount = await AccountServices.findAccount({
@@ -173,7 +166,7 @@ export default class CustomerServices {
       accountTypeId: decodedResetToken.accountTypeId,
     });
 
-    if (!foundAccount) throw new NotFoundException('Invalid credentials!');
+    if (!foundAccount) throw new NotFoundException("Invalid credentials!");
 
     const hashedPassword = await HashHelper.generateHash(data.password);
 
@@ -200,8 +193,7 @@ export default class CustomerServices {
       foundAccount.password
     );
 
-    if (!isPasswordValid)
-      throw new ForbiddenException("INCORRECT PASSWORD");
+    if (!isPasswordValid) throw new ForbiddenException("INCORRECT PASSWORD");
 
     const hashedPassword = await HashHelper.generateHash(data.newPassword);
 
@@ -267,11 +259,10 @@ export default class CustomerServices {
         }
       );
 
-      return await AccountServices.updateAccountAndReturnNew(
+      return await AccountServices.updateAccount(
         { _id: createdAccount._id },
         { accountType: "Customer", accountTypeId: createdCustomer._id }
       );
-
     } catch (error) {
       if (error.code === 11000) {
         throw new Error("Account Exists");
@@ -294,5 +285,4 @@ export default class CustomerServices {
 
     return populatedCustomer[0] as ICustomer;
   }
-  
 }

@@ -37,14 +37,6 @@ export default class BaseRepository<T extends Document> {
     filter: FilterQuery<T>,
     setPayload: object,
     unsetPayload?: object
-  ): Promise<UpdateWriteOpResult> {
-    return await this.model.updateOne(filter, { $set: { ...setPayload }, $unset: { ...unsetPayload } });
-  }
-
-  async updateOneAndReturnNew(
-    filter: FilterQuery<T>,
-    setPayload: object,
-    unsetPayload?: object
   ): Promise<T | null> {
     // Prepare update operations
     const updateOperations: any = {
