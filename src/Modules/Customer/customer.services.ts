@@ -4,7 +4,7 @@ import TokenHelper from "../../Shared/Helpers/token.helper";
 import AccountServices from "../Account/account.services";
 import { CreateBaseAccountInput } from "../Account/accountTypes";
 import EmailServices from "../Mail/mail.services";
-import { WishListServices } from "../WishList/wishList.services";
+import { WishListServices } from "../WishList/wishlist.services";
 import CustomerRepository from "./customer.repository";
 import {
   ChangeCustomerPasswordDTO,

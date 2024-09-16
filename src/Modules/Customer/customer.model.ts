@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { ICart } from '../Cart/cartTypes';
 // import { IShoppingPreferences } from '../../ShoppingPreference/Types/shoppingPreferencesTypes';
-import { IWishList } from '../WishList/wishListTypes';
+import { IWishList } from '../WishList/wishlistTypes';
 
 /**
  * Interface representing the Customer model.

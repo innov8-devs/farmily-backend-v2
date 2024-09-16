@@ -1,6 +1,6 @@
-import { AddOrRemoveProductFromOrToWishListDTO, IWishList } from './wishListTypes';
+import { AddOrRemoveProductFromOrToWishListDTO, IWishList } from './wishlistTypes';
 import { InternalServerException } from '../../Shared/Exceptions';
-import WishListRepository from './wishList.repository';
+import WishListRepository from './wishlist.repository';
 import CustomerServices from '../Customer/customer.services';
 
 export class WishListServices {

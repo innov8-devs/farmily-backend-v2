@@ -1,6 +1,6 @@
 import { AccountType } from '../Account/accountTypes';
 import { ICart } from '../Cart/cartTypes';
-import { IWishList } from '../WishList/wishListTypes';
+import { IWishList } from '../WishList/wishlistTypes';
 
 export class CreateMinimalBaseAccountInput {
   firstName?: string;
