@@ -54,6 +54,7 @@ export default class CustomerController {
 
       res.status(200).json({
         message: "Login successful",
+        token
       });
     } catch (error) {
       res.status(401).json({ error: error.message });
