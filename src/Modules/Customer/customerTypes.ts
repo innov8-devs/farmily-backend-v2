@@ -5,6 +5,7 @@ import { IWishList } from '../WishList/wishlistTypes';
 export class CreateMinimalBaseAccountInput {
   firstName?: string;
   lastName?: string;
+  phoneNumber: number
   email: string;
 }
 
