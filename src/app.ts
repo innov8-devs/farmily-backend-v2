@@ -1,13 +1,14 @@
-import express from "express";
+import express, { Application } from "express";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors, { CorsOptions } from "cors";
-// import swagger from "./docs/swagger";
+import swagger from "./docs/swagger";
+import YAML from 'yamljs';
 
 import customerRoutes from "./Modules/Customer/customer.routes";
 // import { config } from './config/config';
 
-const app = express();
+const app: Application = express();
 
 const corsOptions: CorsOptions = {
 //   origin: ["http://localhost:3000"],
@@ -18,15 +19,18 @@ const corsOptions: CorsOptions = {
   optionsSuccessStatus: 200, 
 };
 
+const swaggerDocument = YAML.load('./swagger.yaml');
+
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
-// app.use(
-//   "/api-docs",
-//   swagger.getSwaggerUi().serve,
-//   swagger.getSwaggerUi().setup(swagger.getSpecs())
-// );
+app.use(
+  "/api/docs",
+  swagger.getSwaggerUi().serve,
+  swagger.getSwaggerUi().setup(swaggerDocument)
+);
+
 app.use("/api/v2/customers", customerRoutes);
 
 export default app;

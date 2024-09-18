@@ -1,0 +1,109 @@
+openapi: 3.0.0
+info:
+  title: Starkmarts API
+  version: 1.0.0
+  description: API documentation for Starkmarts
+servers:
+  - url: https://farmily-backend-v2.onrender.com
+paths:
+  /customers/signup:
+    post:
+      summary: Register a customer
+      tags:
+        - Customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: CHECK_MAIL_BOX
+        '500':
+          description: error
+  /customers/login:
+    post:
+      summary: Login a customer
+      tags:
+        - Customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Login successful"
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '401':
+          description: error
+  /customers/logout:
+    get:
+      summary: Log out of the account
+      tags:
+        - Customer
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer token for the logged-in user
+          schema:
+            type: string
+            example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Logout successful"
+        '401':
+          description: Authentication required!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid token"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "An unexpected error occurred"
