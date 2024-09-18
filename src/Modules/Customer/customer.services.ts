@@ -1,4 +1,4 @@
-import { ICustomer } from "./customerTypes";
+import { ICustomer, ICustomerAccount } from "./customerTypes";
 import HashHelper from "../../Shared/Helpers/hash.helper";
 import TokenHelper from "../../Shared/Helpers/token.helper";
 import AccountServices from "../Account/account.services";
@@ -270,6 +270,38 @@ export default class CustomerServices {
         return error;
       }
     }
+  }
+
+  public static async getCustomerAccountDetails(givenAccountId: string): Promise<ICustomerAccount> {
+    const {
+      _id: accountId,
+      firstName,
+      lastName,
+      email,
+      passwordChangedAt,
+      isVerified,
+      isVerifiedAt,
+      resetAt,
+      accountType,
+      provider,
+      accountTypeId: { _id: customerId, wishListId, cartId },
+    } = await AccountServices.findAccount({ _id: givenAccountId });
+
+    return {
+      accountId,
+      firstName,
+      lastName,
+      email,
+      passwordChangedAt,
+      isVerified,
+      isVerifiedAt,
+      resetAt,
+      provider,
+      accountType,
+      customerId,
+      wishListId,
+      cartId,
+    };
   }
 
   public static async getCustomerByCustomerId(

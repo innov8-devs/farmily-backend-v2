@@ -4,25 +4,9 @@ import { isAuthenticated } from "../../Shared/Middlewares/Account/isAuthenticate
 
 const router = Router();
 
-/**
- * @swagger
- * tags:
- *   name: Customers
- *   description: Customer management
- */
-
-/**
- * @swagger
- * /verify/{verificationToken}:
- *   get:
- *     summary: verify customer
- *     tags: [Customers]
- *     responses:
- *       200:
- *         description:  ACCOUNT VERIFIED SUCCESSFULLY
- */
 router.get("/verify/:verificationToken", CustomerController.verifyCustomer);
 router.get("/logout", isAuthenticated, CustomerController.logoutCustomer);
+router.get("/:accountId", isAuthenticated, CustomerController.getCustomerAccountDetails);
 
 router.post("/signup", CustomerController.signUpCustomer);
 router.post("/login", CustomerController.loginCustomer);

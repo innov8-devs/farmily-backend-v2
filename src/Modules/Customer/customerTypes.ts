@@ -47,3 +47,19 @@ export class ICustomer {
   wishList?: IWishList;
   // shoppingPreferences?: IShoppingPreferences;
 }
+
+export class ICustomerAccount {
+  firstName: string;
+  lastName: string;
+  email: string;
+  passwordChangedAt: Date;
+  isVerified: boolean;
+  isVerifiedAt: Date;
+  resetAt: Date;
+  cartId: string;
+  wishListId: string;
+  accountType: string;
+  accountId: string;
+  customerId: string;
+  provider: string;
+}

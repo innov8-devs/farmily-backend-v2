@@ -132,4 +132,21 @@ export default class CustomerController {
     }
   }
  */
+
+  public static async getCustomerAccountDetails(req: Request, res: Response): Promise<void> {
+    try {
+      const givenAccountId = req.params.accountId;
+
+      const customer = await CustomerServices.getCustomerAccountDetails(givenAccountId);
+      
+      if (!customer) {
+        res.status(404).json({ message: 'Customer not found' });
+        return;
+      }
+
+      res.status(200).json(customer); // Return the customer data
+    } catch (error) {
+      res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+  }
 }
