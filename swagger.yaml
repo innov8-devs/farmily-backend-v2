@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  title: Starkmarts API
+  title: Farmily API
   version: 1.0.0
-  description: API documentation for Starkmarts
+  description: API documentation for Farmily
 servers:
   - url: https://farmily-backend-v2.onrender.com
 paths:
