@@ -49,7 +49,7 @@ export default class CustomerServices {
 
     const currentClientHost = ClientHelper.getCurrentClient().landingPage;
     //const verificationLink = `${currentClientHost}/auth/customer/verify-account/${verificationToken}`;
-    const verificationLink = `https://farmily.africa/auth/customer/verify-account/${verificationToken}`;
+    const verificationLink = `https://farmily-landing-page.fly.dev/auth/customer/verify-account/${verificationToken}`;
 
     await EmailServices.sendVerificationEmail(
       firstName,
@@ -142,9 +142,9 @@ export default class CustomerServices {
       accountTypeId: foundAccount.accountTypeId,
     });
 
-    const currentClientHost = ClientHelper.getCurrentClient().landingPage;
+    // const currentClientHost = ClientHelper.getCurrentClient().landingPage;
 
-    const resetLink = `${currentClientHost}/auth/customer/reset-password/${resetToken}`;
+    const resetLink = `https://farmily-landing-page.fly.dev/reset-password/${resetToken}`;
 
     await EmailServices.sendResetPasswordEmail(
       foundAccount.firstName,
