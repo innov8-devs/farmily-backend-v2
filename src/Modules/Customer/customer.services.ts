@@ -48,8 +48,8 @@ export default class CustomerServices {
     await AccountServices.updateAccount({ _id }, { verificationToken });
 
     const currentClientHost = ClientHelper.getCurrentClient().landingPage;
-    const verificationLink = `${currentClientHost}/auth/customer/verify-account/${verificationToken}`;
-    //const verificationLink = `https://www.farmily.africa/auth/customer/verify-account/${verificationToken}`;
+    //const verificationLink = `${currentClientHost}/auth/customer/verify-account/${verificationToken}`;
+    const verificationLink = `https://farmily-landing-page.fly.dev/auth/customer/verify-account/${verificationToken}`;
 
     await EmailServices.sendVerificationEmail(
       firstName,
