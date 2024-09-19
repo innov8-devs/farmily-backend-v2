@@ -35,7 +35,7 @@ export default class CustomerServices {
     });
 
     if (isAccountRegistered)
-      throw new NotFoundException("This account exists!");
+      throw new NotFoundException("Email or phone number exists!");
 
     const { _id, firstName, accountType, accountTypeId } =
       await CustomerServices.createCustomer(data);
