@@ -45,7 +45,7 @@ export const config = {
       redirectUrl: {
         // staggingLink: 'https://stagging.farmily.africa/auth/google/callback',
         staggingLink: "http://localhost:8000/auth/google/callback",
-        productionLink: "https://www.farmily.africa/auth/google/callback",
+        productionLink: "https://farmily-landing-page.fly.dev/auth/google/callback",
       },
     },
   },
