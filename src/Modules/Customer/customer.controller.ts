@@ -9,6 +9,7 @@ import {
   LoginCustomerInput,
   ResetCustomerPasswordInput,
 } from "./customerTypes";
+import { validateSignup } from "../../Validators/account.validator";
 
 export default class CustomerController {
   public static async signUpCustomer(
@@ -17,6 +18,18 @@ export default class CustomerController {
   ): Promise<void> {
     try {
       const data: CreateBaseAccountInput = req.body;
+
+      const { error } = validateSignup(req.body);
+
+      if (error) {
+        res.status(400).json({
+          success: false,
+          message: "Validation failed",
+          errors: error.details,
+        });
+      
+        return
+      }
 
       const message = await CustomerServices.signUpCustomer(data);
 
@@ -54,7 +67,7 @@ export default class CustomerController {
 
       res.status(200).json({
         message: "Login successful",
-        token
+        token,
       });
     } catch (error) {
       res.status(401).json({ error: error.message });
@@ -133,20 +146,27 @@ export default class CustomerController {
   }
  */
 
-  public static async getCustomerAccountDetails(req: Request, res: Response): Promise<void> {
+  public static async getCustomerAccountDetails(
+    req: Request,
+    res: Response
+  ): Promise<void> {
     try {
       const givenAccountId = req.params.accountId;
 
-      const customer = await CustomerServices.getCustomerAccountDetails(givenAccountId);
-      
+      const customer = await CustomerServices.getCustomerAccountDetails(
+        givenAccountId
+      );
+
       if (!customer) {
-        res.status(404).json({ message: 'Customer not found' });
+        res.status(404).json({ message: "Customer not found" });
         return;
       }
 
       res.status(200).json(customer); // Return the customer data
     } catch (error) {
-      res.status(500).json({ error: 'Internal server error', details: error.message });
+      res
+        .status(500)
+        .json({ error: "Internal server error", details: error.message });
     }
   }
 }

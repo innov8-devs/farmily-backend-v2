@@ -7,7 +7,7 @@ export enum AccountType {
 export interface CreateMinimalBaseAccountInput {
   firstName?: string;
   lastName?: string;
-  phoneNumber: number;
+  phoneNumber?: string;
   email: string;
 }
 

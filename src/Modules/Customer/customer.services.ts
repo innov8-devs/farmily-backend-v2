@@ -1,4 +1,5 @@
 import { ICustomer, ICustomerAccount } from "./customerTypes";
+import { IAccountModel } from "../Account/account.model";
 import HashHelper from "../../Shared/Helpers/hash.helper";
 import TokenHelper from "../../Shared/Helpers/token.helper";
 import AccountServices from "../Account/account.services";
@@ -12,7 +13,7 @@ import {
   LoginCustomerInput,
   ResetCustomerPasswordInput,
 } from "./customerTypes";
-import { ClientHelper } from "../../Shared/Helpers/client.helper";
+// import { ClientHelper } from "../../Shared/Helpers/client.helper";
 import {
   ForbiddenException,
   InternalServerException,
@@ -22,7 +23,7 @@ import {
 import { CartServices } from "../Cart/cart.services";
 
 /**
- * Service class for handling customer mutations.
+ * Service class for handling customer services.
  *
  */
 export default class CustomerServices {
@@ -30,7 +31,7 @@ export default class CustomerServices {
     data: CreateBaseAccountInput
   ): Promise<string> {
     const isAccountRegistered = await AccountServices.accountExists({
-      email: data.email,
+      $or: [{ email: data.email }, { phoneNumber: data.phoneNumber }],
     });
 
     if (isAccountRegistered)
@@ -47,7 +48,7 @@ export default class CustomerServices {
 
     await AccountServices.updateAccount({ _id }, { verificationToken });
 
-    const currentClientHost = ClientHelper.getCurrentClient().landingPage;
+    // const currentClientHost = ClientHelper.getCurrentClient().landingPage;
     //const verificationLink = `${currentClientHost}/auth/customer/verify-account/${verificationToken}`;
     const verificationLink = `https://farmily-landing-page.fly.dev/auth/customer/verify-account/${verificationToken}`;
 
@@ -57,7 +58,7 @@ export default class CustomerServices {
       verificationLink
     );
 
-    return "CHECK_MAIL_BOX";
+    return "CHECK MAIL BOX";
   }
 
   public static async verifyCustomer(verificationToken: string) {
@@ -118,7 +119,6 @@ export default class CustomerServices {
     return token;
   }
 
-  // /**
   public static async forgetCustomerPassword(
     data: ForgetCustomerPasswordInput
   ) {
@@ -205,18 +205,15 @@ export default class CustomerServices {
     return "PASSWORD CHANGED SUCCESSFULLY";
   }
 
-  /*
   public static async createCustomerGoogleAccount(): Promise<IAccountModel> {
     const createdAccount = await CustomerRepository.createOne({});
 
     if (!createdAccount)
-      throw new InternalServerException(
-        CustomerConstants.ACCOUNT_CREATION_FAILED
-      );
+      throw new InternalServerException("ACCOUNT CREATION FAILED");
 
     return createdAccount;
   }
-  */
+
   //   public static async assignCartToCustomer(filter: any, cartId: any) {
   //     const isAssigned = await CustomerRepository.updateOne(filter, { cartId });
 
@@ -272,7 +269,9 @@ export default class CustomerServices {
     }
   }
 
-  public static async getCustomerAccountDetails(givenAccountId: string): Promise<ICustomerAccount> {
+  public static async getCustomerAccountDetails(
+    givenAccountId: string
+  ): Promise<ICustomerAccount> {
     const {
       _id: accountId,
       firstName,

@@ -1,7 +1,7 @@
 import { IAccountModel } from "./account.model";
 import AccountRepository from "./account.repository";
 import { CreateAccountInput, CreateGoogleAccountInput } from "./accountTypes";
-import { NotFoundException } from "../../Shared/Exceptions";
+import { NotFoundException, InternalServerException } from "../../Shared/Exceptions";
 
 export default class AccountServices {
   public static async createAccount(
@@ -17,10 +17,13 @@ export default class AccountServices {
 
   public static async createGoogleAccount(
     data: CreateGoogleAccountInput
-  ): Promise<IAccountModel | string> {
+  ): Promise<IAccountModel> {
     const createdAccount = await AccountRepository.createOne(data);
 
-    if (!createdAccount) return "ACCOUNT CREATION FAILED!";
+    if (!createdAccount)
+      throw new InternalServerException(
+        "ACCOUNT CREATION FAILED"
+      );
 
     return createdAccount;
   }

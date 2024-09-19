@@ -5,7 +5,7 @@ export interface IAccountModel extends Document {
   email: string;
   firstName: string;
   lastName: string;
-  phoneNumber: number;
+  phoneNumber: string;
   password: string;
   passwordChangedAt: Date;
   verificationToken: string;
@@ -27,7 +27,11 @@ const accountSchema = new Schema<IAccountModel>(
     },
     firstName: String,
     lastName: String,
-    phoneNumber: Number,
+    phoneNumber: {
+      type: String,
+      unique: true,
+      index: true,
+    },
     password: String,
     passwordChangedAt: Date,
     verificationToken: String,

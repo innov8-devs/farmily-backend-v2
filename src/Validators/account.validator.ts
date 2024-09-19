@@ -1,27 +1,29 @@
 import Joi from 'joi';
 
-const accountSchema = Joi.object({
-  email: Joi.string().email().required(),
+const signupSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
-  password: Joi.string().required(),
-  passwordChangedAt: Joi.date().optional(),
-  verificationToken: Joi.string().optional(),
-  isVerified: Joi.boolean().default(false),
-  isVerifiedAt: Joi.date().optional(),
-  resetToken: Joi.string().optional(),
-  resetAt: Joi.date().optional(),
-  accountType: Joi.string().valid('Customer', 'Vendor').required(),
-  accountTypeId: Joi.string().optional(),
-  provider: Joi.string().valid('Local', 'Google').default('Local'),
+  phoneNumber: Joi.string()
+  .pattern(/^(?:\+234|0)[0-9]{10}$/, 'phone number')
+  .required()
+  .messages({
+    'string.pattern.base': 'Phone number must be in the format +2348123456789 or 08123456789',
+    'string.empty': 'Phone number is required'
+  }),
+  email: Joi.string().email().required(),
+  password: Joi.string()
+  .required()
+  .min(8)
+  .pattern(/[A-Z]/, 'uppercase letter')
+  .pattern(/[0-9]/, 'number')
+  .pattern(/[@!#$%^&*(),.?":{}|<>]/, 'special character')
+  .messages({
+    'string.min': 'Password must be at least 8 characters long',
+    'string.pattern.base': 'Password must contain at least one uppercase letter, one number, and one special character',
+    'string.empty': 'Password is required'
+  })
 });
 
-export const validateCreateAccount = (data: any) => {
-  return accountSchema.validate(data, { abortEarly: false });
-};
-
-export const validateUpdateAccount = (data: any) => {
-  return accountSchema
-    .fork(['email', 'password'], schema => schema.optional())
-    .validate(data, { abortEarly: false });
+export const validateSignup = (data: any) => {
+  return signupSchema.validate(data, { abortEarly: false });
 };
