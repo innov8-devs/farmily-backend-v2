@@ -14,9 +14,4 @@ router.post('/forget-password', CustomerController.forgetCustomerPassword);
 router.post('/reset-password', CustomerController.resetCustomerPassword);
 router.post('/change-password', isAuthenticated, CustomerController.changeCustomerPassword);
 
-
-/*
-router.post('/create-google-account', CustomerController.createCustomerGoogleAccount);
-*/
-
 export default router;
