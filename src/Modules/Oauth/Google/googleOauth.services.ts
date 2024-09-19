@@ -1,7 +1,7 @@
 import {
   googleClient,
   TokenPayload,
-} from "../../../Infrastructure/OAuth/googleOAuth.config";
+} from "../../../Infrastructure/OAuth";
 import { config } from "../../../Config/app.config";
 import AccountServices from "../../Account/account.services";
 import CustomerServices from "../../Customer/customer.services";
