@@ -2,7 +2,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const config = {
-  environment: { env: process.env.NODE_ENV, branchName: process.env.BRANCH_NAME },
+  environment: {
+    env: process.env.NODE_ENV,
+    branchName: process.env.BRANCH_NAME,
+  },
   port: process.env.PORT,
   storage: {
     database: {
@@ -37,12 +40,11 @@ export const config = {
   },
   oauth: {
     google: {
-      clientId:
-        "991120416546-cp7jo4mi9a42uu6j7ijp998cui3m8li3.apps.googleusercontent.com",
+      clientId: process.env.GOOGLE_OAUTH_CLIENT_ID,
       clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
       redirectUrl: {
         // staggingLink: 'https://stagging.farmily.africa/auth/google/callback',
-        staggingLink: "https://www.farmily.africa/auth/google/callback",
+        staggingLink: "http://localhost:8000/auth/google/callback",
         productionLink: "https://www.farmily.africa/auth/google/callback",
       },
     },

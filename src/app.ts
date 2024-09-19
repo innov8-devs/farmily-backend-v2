@@ -6,6 +6,7 @@ import swagger from "./docs/swagger";
 import YAML from 'yamljs';
 
 import customerRoutes from "./Modules/Customer/customer.routes";
+import googleOauthRoutes from "./Modules/Oauth/Google/googleOauth.routes";
 // import { config } from './config/config';
 
 const app: Application = express();
@@ -32,5 +33,6 @@ app.use(
 );
 
 app.use("/api/v2/customers", customerRoutes);
+app.use("/auth/google", googleOauthRoutes);
 
 export default app;
