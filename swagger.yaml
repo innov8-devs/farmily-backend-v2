@@ -28,7 +28,7 @@ paths:
                   type: string
       responses:
         '200':
-          description: CHECK_MAIL_BOX
+          description: CHECK MAIL BOX
         '500':
           description: error
   /customers/login:
