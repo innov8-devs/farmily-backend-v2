@@ -1,5 +1,5 @@
 import express from 'express';
-import { GoogleOAuthController } from './googleOAuth.controller';
+import { GoogleOAuthController } from './googleOauth.controller';
 const router = express.Router();
 
 router.get('/login', GoogleOAuthController.initiateSignUpOrLogin);
