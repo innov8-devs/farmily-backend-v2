@@ -151,7 +151,7 @@ export default class CustomerController {
     res: Response
   ): Promise<void> {
     try {
-      const givenAccountId = req.params.accountId;
+      const givenAccountId = req.user.accountId;
 
       const customer = await CustomerServices.getCustomerAccountDetails(
         givenAccountId
@@ -162,7 +162,7 @@ export default class CustomerController {
         return;
       }
 
-      res.status(200).json(customer); // Return the customer data
+      res.status(200).json({customer}); // Return the customer data
     } catch (error) {
       res
         .status(500)
