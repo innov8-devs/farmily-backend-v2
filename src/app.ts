@@ -33,6 +33,6 @@ app.use(
 );
 
 app.use("/api/v2/customers", customerRoutes);
-app.use("/api/v2/google", googleOauthRoutes);
+app.use("/api/v2/auth/google", googleOauthRoutes);
 
 export default app;
