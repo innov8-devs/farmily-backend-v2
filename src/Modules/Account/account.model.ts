@@ -16,6 +16,7 @@ export interface IAccountModel extends Document {
   accountType: 'Customer' | 'Vendor';
   accountTypeId: Schema.Types.ObjectId | IAccountModel;
   provider: 'Local' | 'Google';
+  role: string;
 }
 
 const accountSchema = new Schema<IAccountModel>(
@@ -55,6 +56,10 @@ const accountSchema = new Schema<IAccountModel>(
       default: 'Local',
       index: true,
     },
+    role: {
+      type: String,
+      default: "user"
+    }
   },
   {
     timestamps: true,
