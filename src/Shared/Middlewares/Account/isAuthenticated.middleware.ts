@@ -4,21 +4,22 @@ import { config } from '../../../Config/app.config';
 import { IDecodedToken } from '../../../Modules/Account/accountTypes';
 
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies.auth_token;
+  const authHeader = req.headers.authorization;
 
-  if (!token) {
-    return res.status(401).json({ message: 'Authentication required!' });
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Authentication required' });
   }
+
+  const token = authHeader.split(' ')[1];
 
   try {
     const secret = config.tokenSecrets.accessToken.secret;
-
-    const decoded = jwt.verify(token, secret) as IDecodedToken; 
+    const decoded = jwt.verify(token, secret) as IDecodedToken;
 
     req.user = decoded;
-
     next();
-  } catch (err) {
+  } catch (error) {
+    console.error('Authentication error:', error);
     return res.status(401).json({ message: 'Invalid token' });
   }
 };
