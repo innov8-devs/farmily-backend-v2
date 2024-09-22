@@ -7,6 +7,7 @@ import YAML from 'yamljs';
 
 import customerRoutes from "./Modules/Customer/customer.routes";
 import googleOauthRoutes from "./Modules/Oauth/Google/googleOauth.routes";
+import imageRoutes from "./Modules/Image/image.routes";
 // import { config } from './config/config';
 
 const app: Application = express();
@@ -34,5 +35,6 @@ app.use(
 
 app.use("/api/v2/customers", customerRoutes);
 app.use("/api/v2/auth/google", googleOauthRoutes);
+app.use("/api/v2/images", imageRoutes);
 
 export default app;
