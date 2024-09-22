@@ -9,6 +9,7 @@ router.get("/logout", isAuthenticated, CustomerController.logoutCustomer);
 router.get("/getCustomerAccountDetails", isAuthenticated, CustomerController.getCustomerAccountDetails);
 
 router.post("/signup", CustomerController.signUpCustomer);
+router.post("/resend-verification-link", CustomerController.resendVerificationLink);
 router.post("/login", CustomerController.loginCustomer);
 router.post('/forget-password', CustomerController.forgetCustomerPassword);
 router.post('/reset-password', CustomerController.resetCustomerPassword);

@@ -27,13 +27,29 @@ export default class CustomerController {
           message: "Validation failed",
           errors: error.details,
         });
-      
-        return
+
+        return;
       }
 
       const message = await CustomerServices.signUpCustomer(data);
 
       res.status(200).json({ message });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  public static async resendVerificationLink(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    try {
+      const { email } = req.body;
+
+      const message = await CustomerServices.resendVerificationLink(email);
+
+      res.status(200).json({ message });
+      
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -162,7 +178,7 @@ export default class CustomerController {
         return;
       }
 
-      res.status(200).json({customer}); // Return the customer data
+      res.status(200).json({ customer }); // Return the customer data
     } catch (error) {
       res
         .status(500)
