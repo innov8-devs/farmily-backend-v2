@@ -1,4 +1,4 @@
-import { IImage } from "../Images/imageTypes";
+import { IImage } from "../Image/imageTypes";
 
 export interface IProduct {
   _id: string;
