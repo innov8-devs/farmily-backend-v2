@@ -23,6 +23,8 @@ const corsOptions: CorsOptions = {
 
 const swaggerDocument = YAML.load('./swagger.yaml');
 
+app.set('trust proxy', 1); // Trust the first proxy
+
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
