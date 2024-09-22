@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IAccountModel extends Document {
   _id: string;
@@ -13,9 +13,11 @@ export interface IAccountModel extends Document {
   isVerifiedAt: Date;
   resetToken: string;
   resetAt: Date;
-  accountType: 'Customer' | 'Vendor';
+  resetTokenGeneratedAt: Date;
+  verificationTokenGeneratedAt: Date;
+  accountType: "Customer" | "Vendor";
   accountTypeId: Schema.Types.ObjectId | IAccountModel;
-  provider: 'Local' | 'Google';
+  provider: "Local" | "Google";
   role: string;
 }
 
@@ -40,31 +42,33 @@ const accountSchema = new Schema<IAccountModel>(
     isVerifiedAt: Date,
     resetToken: String,
     resetAt: Date,
+    resetTokenGeneratedAt: Date,
+    verificationTokenGeneratedAt: Date,
     accountType: {
       type: String,
-      enum: ['Customer', 'Vendor'],
+      enum: ["Customer", "Vendor"],
       index: true,
     },
     accountTypeId: {
       type: Schema.Types.ObjectId,
-      refPath: 'accountType',
+      refPath: "accountType",
       index: true,
     },
     provider: {
       type: String,
-      enum: ['Local', 'Google'],
-      default: 'Local',
+      enum: ["Local", "Google"],
+      default: "Local",
       index: true,
     },
     role: {
       type: String,
-      default: "user"
-    }
+      default: "user",
+    },
   },
   {
     timestamps: true,
     versionKey: false,
-  },
+  }
 );
 
-export default mongoose.model<IAccountModel>('Account', accountSchema);
+export default mongoose.model<IAccountModel>("Account", accountSchema);
