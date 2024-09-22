@@ -18,6 +18,7 @@ import {
   ForbiddenException,
   InternalServerException,
   NotFoundException,
+  BadRequestException
 } from "../../Shared/Exceptions";
 // import { ShoppingPreferencesServices } from '../../ShoppingPreference/Services';
 import { CartServices } from "../Cart/cart.services";
@@ -46,15 +47,60 @@ export default class CustomerServices {
       accountTypeId,
     });
 
-    await AccountServices.updateAccount({ _id }, { verificationToken });
-
     // const currentClientHost = ClientHelper.getCurrentClient().landingPage;
     //const verificationLink = `${currentClientHost}/auth/customer/verify-account/${verificationToken}`;
     const verificationLink = `https://farmily-landing-page.fly.dev/auth/customer/verify-account/${verificationToken}`;
 
+    await AccountServices.updateAccount(
+      { _id },
+      { verificationToken, verificationTokenGeneratedAt: new Date() }
+    );
+
     await EmailServices.sendVerificationEmail(
       firstName,
       data.email,
+      verificationLink
+    );
+
+    return "CHECK MAIL BOX";
+  }
+
+  public static async resendVerificationLink(email: string): Promise<string> {
+
+    const { _id, isVerified, firstName, verificationToken, verificationTokenGeneratedAt, accountType, accountTypeId } =
+      await AccountServices.findAccount({ email });
+
+    if (isVerified) throw new BadRequestException(
+      "ACCOUNT IS VERIFIED."
+    );
+
+    let newToken: string;
+
+    if (!verificationToken) {
+      newToken = TokenHelper.generateVerificationToken({
+        accountId: _id,
+        accountType,
+        accountTypeId,
+      });
+    }
+
+    const verificationLink = `https://farmily-landing-page.fly.dev/auth/customer/verify-account/${newToken}`;
+
+    // Can generate new token after 30 seconds.
+    const isAbleToGenerateNewToken = CustomerServices.isAbleToGenerateNewToken({
+      tokenGeneratedAt: verificationTokenGeneratedAt,
+      timeInMs: 30000,
+    });
+
+    if (!isAbleToGenerateNewToken) {
+      throw new BadRequestException(
+        "Check your mail or Try again after 30 seconds."
+      );
+    }
+
+    await EmailServices.sendVerificationEmail(
+      firstName,
+      email,
       verificationLink
     );
 
@@ -73,7 +119,6 @@ export default class CustomerServices {
 
     if (foundAccount.isVerified && !foundAccount.verificationToken)
       throw new ForbiddenException("The account is already verified!");
-
     if (
       accountType !== foundAccount.accountType &&
       accountTypeId !== foundAccount.accountTypeId
@@ -83,7 +128,7 @@ export default class CustomerServices {
     await AccountServices.updateAccount(
       { _id: accountId },
       { isVerified: true, isVerifiedAt: new Date() },
-      { verificationToken: 1 }
+      { verificationToken: 1, verificationTokenGeneratedAt: 1 }
     );
 
     await EmailServices.sendWelcomeEmail(
@@ -132,8 +177,17 @@ export default class CustomerServices {
         foundAccount.resetToken
       );
 
-      if (decodedResetToken)
-        throw new ForbiddenException("ALREADY HAVE VALID RESET LINK");
+      // Can generate new token after 30 seconds.
+      const isAbleToGenerateNewToken =
+        CustomerServices.isAbleToGenerateNewToken({
+          tokenGeneratedAt: foundAccount.resetTokenGeneratedAt,
+          timeInMs: 30000,
+        });
+
+      if (decodedResetToken && !isAbleToGenerateNewToken)
+        throw new ForbiddenException(
+          "Check your mail or Try again after 30 seconds."
+        );
     }
 
     const resetToken = TokenHelper.generateResetToken({
@@ -146,13 +200,13 @@ export default class CustomerServices {
 
     const resetLink = `https://farmily-landing-page.fly.dev/reset-password/${resetToken}`;
 
+    await AccountServices.updateAccount({ email: data.email }, { resetToken });
+
     await EmailServices.sendResetPasswordEmail(
       foundAccount.firstName,
       data.email,
       resetLink
     );
-
-    await AccountServices.updateAccount({ email: data.email }, { resetToken });
 
     return "CHECK MAIL BOX";
   }
@@ -166,9 +220,20 @@ export default class CustomerServices {
       accountTypeId: decodedResetToken.accountTypeId,
     });
 
-    if (!foundAccount) throw new NotFoundException("Invalid credentials!");
+    const oldPasswordHash = foundAccount.password;
+    const newPassword = data.password;
 
-    const hashedPassword = await HashHelper.generateHash(data.password);
+    const isPasswordSame = await HashHelper.verifyHash(
+      newPassword,
+      oldPasswordHash
+    );
+
+    const hashedPassword = await HashHelper.generateHash(newPassword);
+
+    if (isPasswordSame)
+      throw new ForbiddenException(
+        "Password cannot be the same as your previous password!"
+      );
 
     await AccountServices.updateAccount(
       {
@@ -194,6 +259,11 @@ export default class CustomerServices {
     );
 
     if (!isPasswordValid) throw new ForbiddenException("INCORRECT PASSWORD");
+
+    if (data.oldPassword === data.newPassword)
+      throw new ForbiddenException(
+        "Password cannot be the same as your previous password"
+      );
 
     const hashedPassword = await HashHelper.generateHash(data.newPassword);
 
@@ -223,51 +293,6 @@ export default class CustomerServices {
   //     if (isAssigned.modifiedCount === 0)
   //       return "The customer cart assigning process failed!"
   //   }
-
-  private static async createCustomer(
-    data: CreateBaseAccountInput
-  ): Promise<any> {
-    try {
-      const hashedPassword = await HashHelper.generateHash(data.password);
-
-      const createdAccount = await AccountServices.createAccount({
-        ...data,
-        password: hashedPassword,
-      });
-      const createdCustomerWhishList = await WishListServices.createWishList();
-      const createdCart = await CartServices.createCart({ items: [] });
-
-      /*
-      const createdShoppingPreferences =
-        await ShoppingPreferencesServices.createShoppingPreferences({
-          preferredProductCategories: [],
-          preferredProductSubCategories: [],
-        });
-       */
-
-      const createdCustomer = await CustomerRepository.createOne({});
-
-      await CustomerRepository.updateOne(
-        { _id: createdCustomer._id },
-        {
-          wishList: createdCustomerWhishList._id,
-          // shoppingPreferences: createdShoppingPreferences._id,
-          cart: createdCart._id,
-        }
-      );
-
-      return await AccountServices.updateAccount(
-        { _id: createdAccount._id },
-        { accountType: "Customer", accountTypeId: createdCustomer._id }
-      );
-    } catch (error) {
-      if (error.code === 11000) {
-        throw new Error("Account Exists");
-      } else {
-        return error;
-      }
-    }
-  }
 
   public static async getCustomerAccountDetails(
     givenAccountId: string
@@ -315,5 +340,67 @@ export default class CustomerServices {
     );
 
     return populatedCustomer[0] as ICustomer;
+  }
+
+  private static async createCustomer(
+    data: CreateBaseAccountInput
+  ): Promise<any> {
+    try {
+      const hashedPassword = await HashHelper.generateHash(data.password);
+
+      const createdAccount = await AccountServices.createAccount({
+        ...data,
+        password: hashedPassword,
+      });
+      const createdCustomerWhishList = await WishListServices.createWishList();
+      const createdCart = await CartServices.createCart({ items: [] });
+
+      /*
+      const createdShoppingPreferences =
+        await ShoppingPreferencesServices.createShoppingPreferences({
+          preferredProductCategories: [],
+          preferredProductSubCategories: [],
+        });
+       */
+
+      const createdCustomer = await CustomerRepository.createOne({});
+
+      await CustomerRepository.updateOne(
+        { _id: createdCustomer._id },
+        {
+          wishList: createdCustomerWhishList._id,
+          // shoppingPreferences: createdShoppingPreferences._id,
+          cart: createdCart._id,
+        }
+      );
+
+      return await AccountServices.updateAccount(
+        { _id: createdAccount._id },
+        { accountType: "Customer", accountTypeId: createdCustomer._id }
+      );
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new Error("Account Exists");
+      } else {
+        return error;
+      }
+    }
+  }
+
+  private static isAbleToGenerateNewToken(data: {
+    tokenGeneratedAt: string;
+    timeInMs: number;
+  }) {
+    const { tokenGeneratedAt, timeInMs } = data;
+
+    const tokenGenTimeStamp = new Date(tokenGeneratedAt);
+
+    const currentTime = new Date();
+
+    const timediff = currentTime.getTime() - tokenGenTimeStamp.getTime();
+
+    const isAbleToGenerateNewToken = timediff > timeInMs;
+
+    return isAbleToGenerateNewToken;
   }
 }
