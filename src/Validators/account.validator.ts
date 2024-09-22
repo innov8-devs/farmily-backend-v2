@@ -24,6 +24,17 @@ const signupSchema = Joi.object({
   })
 });
 
-export const validateSignup = (data: any) => {
-  return signupSchema.validate(data, { abortEarly: false });
-};
+const loginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string()
+    .required()
+});
+export class AccountValidator {
+  public static validateSignup = (data: any) => {
+    return signupSchema.validate(data, { abortEarly: false });
+  };
+
+  public static validateLogin = (data: any) => {
+    return loginSchema.validate(data, { abortEarly: false });
+  };
+}

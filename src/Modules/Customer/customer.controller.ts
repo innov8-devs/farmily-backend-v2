@@ -9,7 +9,7 @@ import {
   LoginCustomerInput,
   ResetCustomerPasswordInput,
 } from "./customerTypes";
-import { validateSignup } from "../../Validators/account.validator";
+import { AccountValidator } from "../../Validators/account.validator";
 
 export default class CustomerController {
   public static async signUpCustomer(
@@ -19,7 +19,7 @@ export default class CustomerController {
     try {
       const data: CreateBaseAccountInput = req.body;
 
-      const { error } = validateSignup(req.body);
+      const { error } = AccountValidator.validateSignup(req.body);
 
       if (error) {
         res.status(400).json({
@@ -49,7 +49,6 @@ export default class CustomerController {
       const message = await CustomerServices.resendVerificationLink(email);
 
       res.status(200).json({ message });
-      
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -76,6 +75,18 @@ export default class CustomerController {
   ): Promise<void> {
     try {
       const data: LoginCustomerInput = req.body;
+
+      const { error } = AccountValidator.validateLogin(data);
+
+      if (error) {
+        res.status(400).json({
+          success: false,
+          message: "Validation failed",
+          errors: error.details,
+        });
+
+        return;
+      }
 
       const token = await CustomerServices.loginCustomer(data);
 
