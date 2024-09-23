@@ -41,18 +41,16 @@ export default class AccountServices {
 
     return updatedAccount;
   }
-
-  public static async accountExists(filter: any): Promise<boolean> {
-    const foundAccount = await AccountRepository.findOne(filter);
-
-    return !!foundAccount;
-  }
-
+  
   public static async findAccount(filter: any): Promise<any> {
     const foundAccount = await AccountRepository.findOne(filter);
 
     if (!foundAccount) throw new NotFoundException('Invalid credentials!');
 
     return foundAccount;
+  }
+
+  public static async checkAccountPresence(filter: any): Promise<any | null> {
+    return await AccountRepository.findOne(filter);
   }
 }
