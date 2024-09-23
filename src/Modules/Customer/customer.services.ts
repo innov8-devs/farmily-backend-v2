@@ -18,7 +18,7 @@ import {
   ForbiddenException,
   InternalServerException,
   NotFoundException,
-  BadRequestException
+  BadRequestException,
 } from "../../Shared/Exceptions";
 // import { ShoppingPreferencesServices } from '../../ShoppingPreference/Services';
 import { CartServices } from "../Cart/cart.services";
@@ -31,7 +31,6 @@ export default class CustomerServices {
   public static async signUpCustomer(
     data: CreateBaseAccountInput
   ): Promise<string> {
-
     const foundAccount = await AccountServices.checkAccountPresence({
       $or: [{ email: data.email }, { phoneNumber: data.phoneNumber }],
     });
@@ -69,13 +68,17 @@ export default class CustomerServices {
   }
 
   public static async resendVerificationLink(email: string): Promise<string> {
+    const {
+      _id,
+      isVerified,
+      firstName,
+      verificationToken,
+      verificationTokenGeneratedAt,
+      accountType,
+      accountTypeId,
+    } = await AccountServices.findAccount({ email });
 
-    const { _id, isVerified, firstName, verificationToken, verificationTokenGeneratedAt, accountType, accountTypeId } =
-      await AccountServices.findAccount({ email });
-
-    if (isVerified) throw new BadRequestException(
-      "ACCOUNT IS VERIFIED."
-    );
+    if (isVerified) throw new BadRequestException("ACCOUNT IS VERIFIED.");
 
     let newToken: string;
 
@@ -175,10 +178,26 @@ export default class CustomerServices {
       accountType: "Customer",
     });
 
+    let decodedResetToken;
+
     if (foundAccount && foundAccount.resetToken) {
-      const decodedResetToken = TokenHelper.verifyResetToken(
-        foundAccount.resetToken
-      );
+
+      try {
+
+        decodedResetToken = TokenHelper.verifyResetToken(
+          foundAccount.resetToken
+        );
+
+      } catch (error) {
+
+        await AccountServices.updateAccount({ email: data.email }, null, {
+          resetToken: 1,
+        });
+
+        throw new ForbiddenException(
+          "Check your mail or Try again after 30 seconds."
+        ); // Expired token
+      }
 
       // Can generate new token after 30 seconds.
       const isAbleToGenerateNewToken =
@@ -199,11 +218,16 @@ export default class CustomerServices {
       accountTypeId: foundAccount.accountTypeId,
     });
 
+    console.log(resetToken)
     // const currentClientHost = ClientHelper.getCurrentClient().landingPage;
 
     const resetLink = `https://farmily-landing-page.fly.dev/reset-password/${resetToken}`;
 
-    await AccountServices.updateAccount({ email: data.email }, { resetToken });
+    await AccountServices.updateAccount(
+      { email: data.email },
+      { resetToken, resetTokenGeneratedAt: new Date() },
+      { isResetTokenUsed: 1 }
+    );
 
     await EmailServices.sendResetPasswordEmail(
       foundAccount.firstName,
@@ -216,6 +240,15 @@ export default class CustomerServices {
 
   public static async resetCustomerPassword(data: ResetCustomerPasswordInput) {
     const decodedResetToken = TokenHelper.verifyResetToken(data.resetToken);
+
+    const checkTokenPresence = await AccountServices.checkAccountPresence({
+      _id: decodedResetToken.accountId,
+      isResetTokenUsed: true,
+    });
+
+    const tokenUsed = !!checkTokenPresence;
+
+    if (tokenUsed) throw new ForbiddenException("LINK HAS BEEN USED!");
 
     const foundAccount = await AccountServices.findAccount({
       _id: decodedResetToken.accountId,
@@ -244,7 +277,7 @@ export default class CustomerServices {
         accountType: decodedResetToken.accountType,
         accountTypeId: decodedResetToken.accountTypeId,
       },
-      { password: hashedPassword, resetAt: new Date() },
+      { password: hashedPassword, resetAt: new Date(), isResetTokenUsed: true },
       { resetToken: 1 }
     );
 

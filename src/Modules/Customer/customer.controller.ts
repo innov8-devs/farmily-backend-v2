@@ -130,6 +130,7 @@ export default class CustomerController {
   ): Promise<void> {
     try {
       const data: ResetCustomerPasswordInput = req.body;
+      
       const message = await CustomerServices.resetCustomerPassword(data);
       res.status(200).json({ message });
     } catch (error) {

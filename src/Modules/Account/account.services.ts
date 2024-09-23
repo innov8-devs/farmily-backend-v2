@@ -30,8 +30,8 @@ export default class AccountServices {
 
   public static async updateAccount(
     filter: any,
-    setPayload: any,
-    unSetPayload: any = undefined
+    setPayload?: any,
+    unSetPayload?: any
   ): Promise<any> {
     const updatedAccount = await AccountRepository.updateOne(
       filter,

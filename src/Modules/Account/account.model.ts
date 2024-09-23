@@ -9,12 +9,13 @@ export interface IAccountModel extends Document {
   password: string;
   passwordChangedAt: Date;
   verificationToken: string;
+  verificationTokenGeneratedAt: Date;
   isVerified: boolean;
   isVerifiedAt: Date;
   resetToken: string;
   resetAt: Date;
   resetTokenGeneratedAt: Date;
-  verificationTokenGeneratedAt: Date;
+  isResetTokenUsed: Boolean;
   accountType: "Customer" | "Vendor";
   accountTypeId: Schema.Types.ObjectId | IAccountModel;
   provider: "Local" | "Google";
@@ -43,6 +44,7 @@ const accountSchema = new Schema<IAccountModel>(
     resetToken: String,
     resetAt: Date,
     resetTokenGeneratedAt: Date,
+    isResetTokenUsed: Boolean,
     verificationTokenGeneratedAt: Date,
     accountType: {
       type: String,

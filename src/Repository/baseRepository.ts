@@ -35,7 +35,7 @@ export default class BaseRepository<T extends Document> {
 
   async updateOne(
     filter: FilterQuery<T>,
-    setPayload: object,
+    setPayload?: object,
     unsetPayload?: object
   ): Promise<T | null> {
     // Prepare update operations
