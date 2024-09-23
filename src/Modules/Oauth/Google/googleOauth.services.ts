@@ -38,15 +38,8 @@ export class GoogleOAuthServices {
         email_verified: isVerified,
       } = await GoogleOAuthServices.getGoogleUserPayload(tokens);
 
-      console.log("Step 4: Google user data", {
-        email,
-        firstName,
-        lastName,
-        isVerified,
-      });
-
       // Step 4: Check if account already exists
-      const isAccountFound = await AccountServices.accountExists({ email });
+      const isAccountFound = await AccountServices.findAccount({ email });
 
       // Step 5: Handle account login or creation
       return isAccountFound
@@ -59,12 +52,8 @@ export class GoogleOAuthServices {
             email,
             isVerified
           );
+
     } catch (error) {
-      // Handle errors with more detail
-      console.error(
-        `Error at Google sign-up/login callback: ${error.message}`,
-        error
-      );
       throw new Error(
         `Error handling Google sign-up or login callback: ${error.message}`
       );
@@ -122,7 +111,7 @@ export class GoogleOAuthServices {
   }
 
   // Assigns a session to an account
-  private static async assignSession(account: any): Promise<{ token: string }> {
+  private static async assignSession(account: any): Promise<{token: string }> {
     const token = TokenHelper.generateAccessToken({
       accountId: account._id,
       accountType: account.accountType,
