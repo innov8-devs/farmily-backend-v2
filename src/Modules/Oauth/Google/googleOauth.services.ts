@@ -38,14 +38,14 @@ export class GoogleOAuthServices {
         email_verified: isVerified,
       } = await GoogleOAuthServices.getGoogleUserPayload(tokens);
 
-      // Step 4: Check if account already exists
-      const isAccountFound = await AccountServices.findAccount({ email });
+      // Step 4: fetch account if exists
+      const foundAccount = await AccountServices.checkAccountPresence({ email });
+
+      const isAccountFound = !!foundAccount;
 
       // Step 5: Handle account login or creation
       return isAccountFound
-        ? await GoogleOAuthServices.assignSessionToExistingAccount(
-            isAccountFound
-          )
+        ? await GoogleOAuthServices.assignSessionToExistingAccount(foundAccount)
         : await GoogleOAuthServices.createNewCustomerAccount(
             firstName,
             lastName,
