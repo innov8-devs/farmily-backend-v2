@@ -31,9 +31,12 @@ export default class CustomerServices {
   public static async signUpCustomer(
     data: CreateBaseAccountInput
   ): Promise<string> {
-    const isAccountRegistered = await AccountServices.accountExists({
+
+    const foundAccount = await AccountServices.checkAccountPresence({
       $or: [{ email: data.email }, { phoneNumber: data.phoneNumber }],
     });
+
+    const isAccountRegistered = !!foundAccount;
 
     if (isAccountRegistered)
       throw new NotFoundException("Email or phone number exists!");
