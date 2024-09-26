@@ -218,9 +218,7 @@ export default class CustomerServices {
       accountTypeId: foundAccount.accountTypeId,
     });
 
-    console.log(resetToken)
     // const currentClientHost = ClientHelper.getCurrentClient().landingPage;
-
     const resetLink = `https://farmily-landing-page.fly.dev/reset-password/${resetToken}`;
 
     await AccountServices.updateAccount(
