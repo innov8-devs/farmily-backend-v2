@@ -5,7 +5,6 @@ import {
   PipelineStage,
   UpdateWriteOpResult,
   UpdateQuery,
-  FlattenMaps,
 } from "mongoose";
 
 /**
@@ -29,8 +28,37 @@ export default class BaseRepository<T extends Document> {
     return await this.model.findOne(query).lean();
   }
 
-  async findMany(query: FilterQuery<T>, limit = 10): Promise<FlattenMaps<T>[]> {
-    return await this.model.find(query).limit(limit).lean();
+  async findMany(
+    query: FilterQuery<T>,
+    options: {
+      sort?: string;
+      skip?: number;
+      limit?: number;
+      populate?: string;
+    } = {}
+  ): Promise<any >{
+    let mongoQuery = this.model.find(query);
+
+    // Apply sorting if provided
+    if (options.sort) {
+      mongoQuery = mongoQuery.sort(options.sort);
+    }
+
+    // Apply pagination if skip and limit are provided
+    if (typeof options.skip === "number") {
+      mongoQuery = mongoQuery.skip(options.skip);
+    }
+
+    if (typeof options.limit === "number") {
+      mongoQuery = mongoQuery.limit(options.limit);
+    }
+
+    // Apply population if provided
+    if (options.populate) {
+      mongoQuery = mongoQuery.populate(options.populate);
+    }
+
+    return mongoQuery; // Return the query object for further manipulation or execution
   }
 
   async updateOne(
