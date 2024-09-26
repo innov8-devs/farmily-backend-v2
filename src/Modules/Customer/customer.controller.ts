@@ -9,7 +9,7 @@ import {
   LoginCustomerInput,
   ResetCustomerPasswordInput,
 } from "./customerTypes";
-import { AccountValidator } from "../../Validators/account.validator";
+import { AccountValidator } from "../Account/account.validator";
 
 export default class CustomerController {
   public static async signUpCustomer(
