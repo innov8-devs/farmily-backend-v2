@@ -34,9 +34,9 @@ export default class BaseRepository<T extends Document> {
       sort?: string;
       skip?: number;
       limit?: number;
-      populate?: string;
+      populate?: string[];
     } = {}
-  ): Promise<any >{
+  ): Promise<any> {
     let mongoQuery = this.model.find(query);
 
     // Apply sorting if provided
@@ -54,8 +54,10 @@ export default class BaseRepository<T extends Document> {
     }
 
     // Apply population if provided
-    if (options.populate) {
-      mongoQuery = mongoQuery.populate(options.populate);
+    if (Array.isArray(options.populate)) {
+      options.populate.forEach((field) => {
+        mongoQuery = mongoQuery.populate(field);
+      });
     }
 
     return mongoQuery; // Return the query object for further manipulation or execution
@@ -111,10 +113,10 @@ export default class BaseRepository<T extends Document> {
   }
 
   async populate(
-    documentsToBePopulated: T[],
+    documentsToBePopulated: any[],
     paths: string[],
     models: string[]
-  ): Promise<T[]> {
+  ): Promise<any[]> {
     const populateOptions = paths.map((path, index) => ({
       path,
       model: models[index],
