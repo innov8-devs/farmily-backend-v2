@@ -4,6 +4,7 @@ import {
   validateAddToCart,
   validateRemoveProductFromCart,
 } from "./cart.validator";
+import { InternalServerException } from "../../Shared/Exceptions";
 
 export class CartController {
   public static async addProduct(
@@ -64,7 +65,7 @@ export class CartController {
 
       return res.status(200).json(result);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+        throw new InternalServerException("CLEAR CART FAILED");
     }
   }
 

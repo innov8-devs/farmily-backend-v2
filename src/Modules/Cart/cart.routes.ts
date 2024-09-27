@@ -7,7 +7,7 @@ const router = Router();
 router.get("/", isAuthenticated, CartController.getCart);
 router.post("/add", isAuthenticated, CartController.addProduct);
 router.delete(
-  "/:productId",
+  "/products/:productId",
   isAuthenticated,
   CartController.removeProduct
 );
