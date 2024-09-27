@@ -2,24 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import { CartServices } from "./cart.services";
 import {
   validateAddToCart,
-  validateCreateCart,
   validateRemoveProductFromCart,
 } from "./cart.validator";
 
 export class CartController {
-  public static async create(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { error } = validateCreateCart(req.body);
-      if (error)
-        return res.status(400).json({ message: error.details[0].message });
-
-      const result = await CartServices.createCart(req.body);
-      return res.status(201).json(result);
-    } catch (error) {
-      next(error);
-    }
-  }
-
   public static async addProduct(
     req: Request,
     res: Response,
@@ -45,10 +31,10 @@ export class CartController {
     try {
       const { productId } = req.params;
 
-      const customerId = "" // grab customerId when you decouple token
+      const { accountTypeId } = req.user;
 
       const { error } = validateRemoveProductFromCart({
-        customerId,
+        customerId: accountTypeId,
         productId,
       });
 
@@ -56,7 +42,7 @@ export class CartController {
         return res.status(400).json({ message: error.details[0].message });
 
       const result = await CartServices.removeProductFromCart(
-        customerId,
+        accountTypeId,
         productId
       );
       return res.status(200).json({ message: result });
@@ -65,23 +51,29 @@ export class CartController {
     }
   }
 
-  public static async clear(req: Request, res: Response, next: NextFunction) {
+  public static async clear(req: Request, res: Response) {
     try {
-      const { customerId } = req.params;
-      const result = await CartServices.clearCart(customerId);
+      const { accountTypeId } = req.user;
+
+      const result = await CartServices.clearCart(accountTypeId);
+
       return res.status(200).json(result);
+
     } catch (error) {
-      next(error);
+      res.status(500).json({ error: error.message });
     }
   }
 
-  public static async getCart(req: Request, res: Response, next: NextFunction) {
+  public static async getCart(req: Request, res: Response) {
     try {
-      const { customerId } = req.params;
-      const result = await CartServices.getCartByCustomerId(customerId);
+      const { accountTypeId } = req.user;
+
+      const result = await CartServices.getCartByCustomerId(accountTypeId);
+
       return res.status(200).json(result);
+
     } catch (error) {
-      next(error);
+      res.status(500).json({ error: error.message });
     }
   }
 }

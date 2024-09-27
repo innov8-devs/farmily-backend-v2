@@ -1,12 +1,16 @@
 import { Router } from "express";
 import { CartController } from "./cart.controller";
+import { isAuthenticated } from "../../Shared/Middlewares/Account/isAuthenticated.middleware";
 
 const router = Router();
 
-router.post("/", CartController.create);
-router.post("/add", CartController.addProduct);
-router.delete("/:customerId/product/:productId", CartController.removeProduct);
-router.delete("/:customerId", CartController.clear);
-router.get("/:customerId", CartController.getCart);
+router.get("/", isAuthenticated, CartController.getCart);
+router.post("/add", isAuthenticated, CartController.addProduct);
+router.delete(
+  "/:productId",
+  isAuthenticated,
+  CartController.removeProduct
+);
+router.delete("/clear", isAuthenticated, CartController.clear);
 
 export default router;
