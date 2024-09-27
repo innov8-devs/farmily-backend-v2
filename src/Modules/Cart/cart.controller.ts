@@ -12,11 +12,16 @@ export class CartController {
     next: NextFunction
   ) {
     try {
-      const { error } = validateAddToCart(req.body);
+      const { accountTypeId } = req.user;
+
+      const data = { ...req.body, customerId: accountTypeId };
+
+      const { error } = validateAddToCart(data);
       if (error)
         return res.status(400).json({ message: error.details[0].message });
 
-      const result = await CartServices.addProductToCart(req.body);
+      const result = await CartServices.addProductToCart(data);
+
       return res.status(200).json({ message: result });
     } catch (error) {
       next(error);
@@ -58,7 +63,6 @@ export class CartController {
       const result = await CartServices.clearCart(accountTypeId);
 
       return res.status(200).json(result);
-
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -71,7 +75,6 @@ export class CartController {
       const result = await CartServices.getCartByCustomerId(accountTypeId);
 
       return res.status(200).json(result);
-
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
