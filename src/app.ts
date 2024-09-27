@@ -10,8 +10,9 @@ import googleOauthRoutes from "./Modules/Oauth/Google/googleOauth.routes";
 import imageRoutes from "./Modules/Image/image.routes";
 import productSectionRoutes from "./Modules/ProductSection/productSection.routes";
 import productCategoryRoutes from "./Modules/ProductCategory/productCategory.routes";
-import productSubCategoryRoutes from "./Modules/ProductCategory/productCategory.routes";
-// import { config } from './config/config';
+import productSubCategoryRoutes from "./Modules/ProductSubCategory/productSubCategory.routes";
+import productRoutes from "./Modules/Product/product.routes";
+import cartRoutes from "./Modules/Cart/cart.routes";
 
 const app: Application = express();
 
@@ -44,5 +45,8 @@ app.use("/api/v2/images", imageRoutes);
 app.use("/api/v2/products/sections", productSectionRoutes);
 app.use("/api/v2/products/categories", productCategoryRoutes);
 app.use("/api/v2/products/subcategories", productSubCategoryRoutes);
+app.use("/api/v2/products", productRoutes);
+app.use("/api/v2/carts", cartRoutes);
+
 
 export default app;
