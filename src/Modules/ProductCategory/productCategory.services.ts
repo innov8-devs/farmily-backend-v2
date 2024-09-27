@@ -41,7 +41,7 @@ class ProductCategoryServices {
           { productSection: sectionInLowerCase },
         ],
       },
-      { sort, skip, limit: pageSize, populate: ["image", "section"] }
+      { sort, skip, limit: pageSize, populate: ["image", "productSection"] }
     );
   }
 
