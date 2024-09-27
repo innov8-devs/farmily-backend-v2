@@ -20,6 +20,7 @@ export class ProductSubCategoryServices {
       const createdProductSubCategory =
         await ProductSubCategoryRepository.createOne(data);
 
+
       if (!createdProductSubCategory) {
         throw new InternalServerException("CREATION FAILED");
       }
@@ -50,12 +51,8 @@ export class ProductSubCategoryServices {
           data.payload
         );
 
-      if (updatedProductSubCategory.matchedCount === 0) {
+      if (!updatedProductSubCategory) {
         throw new NotFoundException("SUB CATEGORY NOT FOUND");
-      }
-
-      if (updatedProductSubCategory.modifiedCount === 0) {
-        throw new InternalServerException("UPDATE FAILED");
       }
 
       updatedProductSubCategory = await this.getProductSubCategory({
@@ -90,27 +87,16 @@ export class ProductSubCategoryServices {
     return "DELETED SUCCESSFULLY";
   }
 
-  public static async getAllProductSubCategories(
-    data: GetAllProductSubCategoriesInput
-  ) {
-    const foundSubProductCategories =
-      await ProductSubCategoryRepository.aggregate([
-        { $sort: { createdAt: data.sort } },
-        { $skip: data.pageSize * (data.pageNumber - 1) },
-        { $limit: data.pageSize },
-      ]);
+  public static async getAllProductSubCategories(query: any) {
+    const { pageNumber, pageSize, sort, category, productSectionId } = query;
+    const skip = (pageNumber - 1) * pageSize;
 
-    if (foundSubProductCategories.length === 0) {
-      throw new NotFoundException("SUB CATEGORIES NOT FOUND");
-    }
-    const populatedProductSubCategories =
-      await ProductSubCategoryRepository.populate(
-        [foundSubProductCategories],
-        ["image"],
-        ["Image"]
-      );
-
-    return populatedProductSubCategories[0];
+    return await ProductSubCategoryRepository.findMany(
+      {
+        $or: [{ category }, { productSectionId }],
+      },
+      { sort, skip, limit: pageSize, populate: ["image"] }
+    );
   }
 
   public static async getProductSubCategory(filter: any) {
@@ -124,8 +110,8 @@ export class ProductSubCategoryServices {
     const populatedProductSubCategory =
       await ProductSubCategoryRepository.populate(
         [foundProductSubCategory],
-        ["image"],
-        ["Image"]
+        ["image", "category"],
+        ["Image", "ProductCategory"]
       );
 
     return populatedProductSubCategory[0];

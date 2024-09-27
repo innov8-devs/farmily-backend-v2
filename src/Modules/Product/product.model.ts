@@ -1,5 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { IImage } from "../Image/imageTypes";
+import { IProductCategoryModel } from "../ProductCategory/productCategory.model";
+import { IProductSubCategoryModel } from "../ProductSubCategory/productSubCategory.model";
 
 export interface IProductModel extends Document {
   _id: string;
@@ -7,17 +9,18 @@ export interface IProductModel extends Document {
   slug: string;
   description: string;
   benefits: string;
-  information: string;
-  shippingCharges: string;
   size: string;
-  price: number;
-  quantity: number;
-  quantityAlert: number;
+  originalPrice: number;
+  discountPrice: number;
+  stockQty: number;
+  stockQtyAlert: number;
+  isFeatured: Boolean;
   image: IImage;
   views: number;
   likes: number;
-  productSection: "Marketplace" | "Mealkit" | "Farmbox";
-  productSectionId: Schema.Types.ObjectId;
+  productSection: string;
+  category: Schema.Types.ObjectId | IProductCategoryModel;
+  subCategory: Schema.Types.ObjectId | IProductSubCategoryModel;
 }
 
 const productSchema = new Schema<IProductModel>(
@@ -26,16 +29,15 @@ const productSchema = new Schema<IProductModel>(
     slug: { type: String, index: true },
     description: String,
     benefits: String,
-    information: String,
-    shippingCharges: String,
     size: { type: String, index: true },
-    price: { type: Number, index: true },
-    quantity: Number,
-    quantityAlert: Number,
+    originalPrice: { type: Number, index: true },
+    discountPrice: { type: Number, index: true },
+    stockQty: Number,
+    stockQtyAlert: Number,
+    isFeatured: Boolean,
     image: {
       type: Schema.Types.ObjectId,
       ref: "Image",
-      index: true,
     },
     likes: {
       type: Number,
@@ -45,14 +47,15 @@ const productSchema = new Schema<IProductModel>(
       type: Number,
       default: 0,
     },
-    productSection: {
-      type: String,
-      enum: ["Farmbox", "MealKit", "Marketplace"],
+    productSection: String,
+    category: {
+      type: Schema.Types.ObjectId,
+      refPath: "ProductCategory",
       index: true,
     },
-    productSectionId: {
+    subCategory: {
       type: Schema.Types.ObjectId,
-      refPath: "productSection",
+      refPath: "ProductSubCategory",
       index: true,
     },
   },

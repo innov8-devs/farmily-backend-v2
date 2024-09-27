@@ -13,8 +13,9 @@ export const validateCreateProductSubCategory = (
     label: Joi.string().required(),
     description: Joi.string().optional(),
     image: Joi.string().required(),
+    productSection: Joi.string().required(),
+    productSectionId: Joi.string().custom(objectId).required(),
     category: Joi.string().custom(objectId).required(),
-    productSection: Joi.string().custom(objectId).required(),
   });
 
   return schema.validate(data);
@@ -36,13 +37,15 @@ export const validateUpdateProductSubCategory = (
 };
 
 export const validateGetAllProductSubCategories = (
-  data: GetAllProductSubCategoriesInput
+  data
 ) => {
   const schema = Joi.object({
-    sort: Joi.string().valid("asc", "desc").default("desc"),
+    category: Joi.string().custom(objectId).optional(),
+    productSectionId: Joi.string().custom(objectId).optional(),
+    sort: Joi.number().valid(1, -1),
     pageSize: Joi.number().min(1).default(10),
     pageNumber: Joi.number().min(1).default(1),
-  });
+  }).or("category", "productSectionId");
 
   return schema.validate(data);
 };
