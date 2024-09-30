@@ -41,15 +41,9 @@ export class CartServices {
       }
     }
 
-    const updatedCart = await CartRepository.updateOne(
+    await CartRepository.updateOne(
       { _id: foundCustomer.cart._id },
       { items: foundCart.items }
-    );
-
-    await CartRepository.populate(
-      [updatedCart],
-      ["items.product"],
-      ["Product"]
     );
 
     return "ADD TO CART SUCCESS";
@@ -125,13 +119,20 @@ export class CartServices {
       throw new NotFoundException("CART NOT FOUND");
     }
 
-    const populatedCart = await CartRepository.populate(
+    const [populatedCart] = await CartRepository.populate(
       [foundCart],
       ["items.product"],
       ["Product"]
     );
 
-    return populatedCart[0] as ICart;
+    const items = populatedCart.items;
+    const [populateCartWithImage] = await CartRepository.populate(
+      [items],
+      ["product.image"],
+      ["Image"]
+    );
+
+    return populateCartWithImage as ICart;
   }
 
   public static async getCartByCustomerId(customerId: string) {
