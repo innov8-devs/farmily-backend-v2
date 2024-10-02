@@ -96,30 +96,20 @@ export class CartServices {
     const cart = await CartRepository.findOne({ _id: foundCustomer.cart._id });
 
     const existingItem = cart.items.find(
-      (cartItem) => cartItem.product._id == productId
+      (cartItem) => cartItem.product == productId
     );
 
     if (!existingItem) {
       throw new NotFoundException("PRODUCT NOT IN CART");
     }
 
-    if (existingItem.quantity === 1) {
-      cart.items = cart.items.filter(
-        (cartItem) => cartItem.product._id.toString() !== productId
-      );
-    } else {
-      existingItem.quantity -= 1;
-    }
-
-    const updatedCart = await CartRepository.updateOne(
-      { _id: foundCustomer.cart._id },
-      { items: cart.items }
+    cart.items = cart.items.filter(
+      (cartItem) => cartItem.product.toString() !== productId
     );
 
-    await CartRepository.populate(
-      [updatedCart],
-      ["items.product"],
-      ["Product"]
+    await CartRepository.updateOne(
+      { _id: foundCustomer.cart._id },
+      { items: cart.items }
     );
 
     return "REMOVE PRODUCT FROM CART";
