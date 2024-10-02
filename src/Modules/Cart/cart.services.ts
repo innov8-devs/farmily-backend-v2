@@ -2,7 +2,12 @@ import {
   InternalServerException,
   NotFoundException,
 } from "../../Shared/Exceptions";
-import { CreateCartInput, AddToCartDTO, ICart } from "./cartTypes";
+import {
+  CreateCartInput,
+  AddToCartDTO,
+  ICart,
+  IncrementOrDecrementInput,
+} from "./cartTypes";
 import CartRepository from "./cart.repository";
 import CustomerServices from "../Customer/customer.services";
 
@@ -32,7 +37,7 @@ export class CartServices {
       );
 
       if (existingItem) {
-        existingItem.quantity += item.quantity;
+        throw new NotFoundException("PRODUCT ALREADY IN CART");
       } else {
         foundCart.items.push({
           product: item.product,
@@ -47,6 +52,37 @@ export class CartServices {
     );
 
     return "ADD TO CART SUCCESS";
+  }
+
+  public static async incrementOrDecrementProductQty(
+    data: IncrementOrDecrementInput
+  ): Promise<string> {
+    const { customerId, productId, quantity } = data;
+
+    const foundCustomer = await CustomerServices.getCustomerByCustomerId(
+      customerId
+    );
+
+    const foundCart = await CartRepository.findOne({
+      _id: foundCustomer.cart._id,
+    });
+
+    const existingItem = foundCart.items.find(
+      (cartItem) => cartItem.product == productId
+    );
+
+    if (!existingItem) {
+      throw new NotFoundException("PRODUCT NOT FOUND IN CART!");
+    } else {
+      existingItem.quantity += quantity;
+    }
+
+    await CartRepository.updateOne(
+      { _id: foundCustomer.cart._id },
+      { items: foundCart.items }
+    );
+
+    return "PRODUCT QUANTITY UPDATED";
   }
 
   public static async removeProductFromCart(

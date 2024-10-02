@@ -25,3 +25,9 @@ export class AddToCartDTO {
 export class CreateCartInput {
   items: AddToCartInput[];
 }
+
+export class IncrementOrDecrementInput {
+  customerId: string;
+  productId: string;
+  quantity: number;
+}

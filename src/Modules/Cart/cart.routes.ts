@@ -6,6 +6,11 @@ const router = Router();
 
 router.get("/", isAuthenticated, CartController.getCart);
 router.post("/add", isAuthenticated, CartController.addProduct);
+router.put(
+  "/:productId/quantity",
+  isAuthenticated,
+  CartController.incrementorDecrementProductQty
+);
 router.delete(
   "/products/:productId",
   isAuthenticated,
