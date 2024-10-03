@@ -85,6 +85,35 @@ export class CartServices {
     return "PRODUCT QUANTITY UPDATED";
   }
 
+  public static async addOrUpdateSpecialRequest(data) {
+    const { customerId, productId, specialRequest } = data;
+
+    const foundCustomer = await CustomerServices.getCustomerByCustomerId(
+      customerId
+    );
+
+    const foundCart = await CartRepository.findOne({
+      _id: foundCustomer.cart._id,
+    });
+
+    const existingItem = foundCart.items.find(
+      (cartItem) => cartItem.product == productId
+    );
+
+    if (!existingItem) {
+      throw new NotFoundException("PRODUCT NOT FOUND IN CART!");
+    } else {
+      existingItem.specialRequest = specialRequest;
+    }
+
+    await CartRepository.updateOne(
+      { _id: foundCustomer.cart._id },
+      { items: foundCart.items }
+    );
+
+    return "OPERATION SUCCESS";
+  }
+
   public static async removeProductFromCart(
     customerId: string,
     productId: string

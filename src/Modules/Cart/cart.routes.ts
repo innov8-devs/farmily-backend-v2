@@ -11,6 +11,11 @@ router.put(
   isAuthenticated,
   CartController.incrementorDecrementProductQty
 );
+router.put(
+  "/:productId/specialRequest",
+  isAuthenticated,
+  CartController.addOrUpdateSpecialRequest
+);
 router.delete(
   "/products/:productId",
   isAuthenticated,

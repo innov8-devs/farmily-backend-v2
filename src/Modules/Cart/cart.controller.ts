@@ -4,14 +4,12 @@ import {
   validateAddToCart,
   validateRemoveProductFromCart,
   validateIncrementorDecrementQty,
+  validateSpecialRequestInput,
 } from "./cart.validator";
 import { InternalServerException } from "../../Shared/Exceptions";
 
 export class CartController {
-  public static async addProduct(
-    req: Request,
-    res: Response,
-  ) {
+  public static async addProduct(req: Request, res: Response) {
     try {
       const { accountTypeId } = req.user;
 
@@ -31,12 +29,12 @@ export class CartController {
 
   public static async incrementorDecrementProductQty(
     req: Request,
-    res: Response,
+    res: Response
   ) {
     try {
       const { accountTypeId: customerId } = req.user;
 
-      const data = { ...req.body, customerId, ...req.params};
+      const data = { ...req.body, customerId, ...req.params };
 
       const { error } = validateIncrementorDecrementQty(data);
 
@@ -47,7 +45,29 @@ export class CartController {
 
       return res.status(200).json({ message: result });
     } catch (error) {
-      res.status(500).json({error})
+      res.status(500).json({ error });
+    }
+  }
+
+  public static async addOrUpdateSpecialRequest(
+    req: Request,
+    res: Response
+  ) {
+    try {
+      const { accountTypeId: customerId } = req.user;
+
+      const data = { ...req.body, customerId, ...req.params };
+
+      const { error } = validateSpecialRequestInput(data);
+
+      if (error)
+        return res.status(400).json({ message: error.details[0].message });
+
+      const result = await CartServices.addOrUpdateSpecialRequest(data);
+
+      return res.status(200).json({ message: result });
+    } catch (error) {
+      res.status(500).json({ error });
     }
   }
 
@@ -75,7 +95,7 @@ export class CartController {
       );
       return res.status(200).json({ message: result });
     } catch (error) {
-      res.status(500).json({error})
+      res.status(500).json({ error });
     }
   }
 
