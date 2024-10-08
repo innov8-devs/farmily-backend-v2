@@ -48,4 +48,10 @@ router.post(
   PaystackController.chargeAuthorization
 );
 
+router.post(
+  "/saved_card",
+  isAuthenticated,
+  PaystackController.payWithSavedCards
+);
+
 export default router;

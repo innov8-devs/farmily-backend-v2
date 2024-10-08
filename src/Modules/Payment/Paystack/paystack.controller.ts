@@ -56,12 +56,12 @@ export class PaystackController {
   public static async validateCard(req: Request, res: Response) {
     try {
       const _id = req.user.accountId;
-      
+
       const foundAccount = await AccountServices.findAccount({ _id });
 
       const data = {
         email: foundAccount.email,
-        userId: foundAccount._id
+        userId: foundAccount._id,
       };
 
       const response = await PaystackServices.validateCard(data);
@@ -69,7 +69,6 @@ export class PaystackController {
       return res
         .status(200)
         .json({ success: true, url: response.data.authorization_url });
-        
     } catch (error) {
       return res.status(500).json({ success: false, message: error.message });
     }
@@ -82,6 +81,28 @@ export class PaystackController {
       return res.status(200).json({ success: true, data: charge });
     } catch (error) {
       return res.status(500).json({ success: false, message: error.message });
+    }
+  }
+
+  public static async payWithSavedCards(req: Request, res: Response) {
+    try {
+      const { accountId: userId } = req.user;
+      const { cardId, amount } = req.body;
+
+      const foundAccount = await AccountServices.findAccount({ _id: userId });
+
+      const data = {
+        userId,
+        cardId,
+        amount,
+        email: foundAccount.email,
+      };
+
+      const response = await PaystackServices.payWithSavedCard(data);
+
+      return res.status(200).json({ data: response });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
   }
 }

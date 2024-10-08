@@ -4,7 +4,9 @@ import {
   validateCustomerInput,
   InitializeTransactionInput,
   chargeAuthorizationInput,
+  payWithSavedCard,
 } from "./paystackTypes";
+import CardRepository from "../../Card/card.repository";
 
 export class PaystackServices {
   private static readonly API_URL: string = "https://api.paystack.co";
@@ -88,12 +90,10 @@ export class PaystackServices {
 
   /**
    * Card is charged as a form of validation
-   * @param data 
-   * @returns 
+   * @param data
    */
   public static async validateCard(data) {
     try {
-      
       // charge the card 50 naira
       const reqData = {
         email: data.email,
@@ -131,5 +131,20 @@ export class PaystackServices {
     } catch (error) {
       throw error;
     }
+  }
+
+  public static async payWithSavedCard(data: payWithSavedCard) {
+    const { userId, cardId, email, amount } = data;
+
+    const card = await CardRepository.findOne({
+      _id: cardId,
+      userId,
+    });
+
+    return await PaystackServices.chargeAuthorization({
+      email,
+      amount,
+      authorization_code: card.authorizationCode,
+    });
   }
 }
