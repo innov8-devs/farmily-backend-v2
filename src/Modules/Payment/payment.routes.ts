@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { PaystackController } from "./Paystack/paystack.controller";
+import { PaystackController } from "./PaymentGateways/Paystack/paystack.controller";
 import PaymentWebhookController from "./paymentWebhook.controller";
 import { isAuthenticated } from "../../Shared/Middlewares/Account/isAuthenticated.middleware";
 
@@ -31,7 +31,7 @@ router.post(
 );
 
 router.post(
-  "/initialize_transaction",
+  "/other_methods",
   isAuthenticated,
   PaystackController.initializeTransaction
 );

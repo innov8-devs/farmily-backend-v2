@@ -1,4 +1,4 @@
-import CardServices from "../Card/card.services";
+import CardServices from "./Card/card.services";
 
 export class PaymentWebhookServices {
   public static async handlePaystackWebhook(updates) {
