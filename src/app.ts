@@ -63,6 +63,6 @@ app.use("/v2/products", productRoutes);
 app.use("/v2/carts", cartRoutes);
 app.use("/v2/payments", paymentRoutes);
 app.use("/v2/cards", cardRoutes);
-app.use("/v2/wishlists", wishlistRoutes);
+// app.use("/v2/wishlists", wishlistRoutes);
 
 export default app;
