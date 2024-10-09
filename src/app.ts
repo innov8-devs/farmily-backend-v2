@@ -48,21 +48,21 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 
 app.use(
-  "/api/docs",
+  "/docs",
   swagger.getSwaggerUi().serve,
   swagger.getSwaggerUi().setup(swaggerDocument)
 );
 
-app.use("/api/v2/customers", customerRoutes);
-app.use("/api/v2/auth/google", googleOauthRoutes);
-app.use("/api/v2/images", imageRoutes);
-app.use("/api/v2/products/sections", productSectionRoutes);
-app.use("/api/v2/products/categories", productCategoryRoutes);
-app.use("/api/v2/products/subcategories", productSubCategoryRoutes);
-app.use("/api/v2/products", productRoutes);
-app.use("/api/v2/carts", cartRoutes);
-app.use("/api/v2/payments", paymentRoutes);
-app.use("/api/v2/cards", cardRoutes);
-app.use("/api/v2/wishlists", wishlistRoutes);
+app.use("/v2/customers", customerRoutes);
+app.use("/v2/auth/google", googleOauthRoutes);
+app.use("/v2/images", imageRoutes);
+app.use("/v2/products/sections", productSectionRoutes);
+app.use("/v2/products/categories", productCategoryRoutes);
+app.use("/v2/products/subcategories", productSubCategoryRoutes);
+app.use("/v2/products", productRoutes);
+app.use("/v2/carts", cartRoutes);
+app.use("/v2/payments", paymentRoutes);
+app.use("/v2/cards", cardRoutes);
+app.use("/v2/wishlists", wishlistRoutes);
 
 export default app;
