@@ -40,7 +40,18 @@ export class PaystackController {
 
   public static async initializeTransaction(req: Request, res: Response) {
     try {
-      const data = req.body;
+      const { accountId: userId } = req.user;
+      const { amount } = req.body;
+
+      const foundAccount = await AccountServices.findAccount({ _id: userId });
+
+      const amountInKobo = Number(amount) * 100;
+
+      const data = {
+        email: foundAccount.email,
+        amount: String(amountInKobo),
+      };
+
       const transaction = await PaystackServices.initializeTransaction(data);
       return res.status(200).json({ success: true, data: transaction });
     } catch (error) {
@@ -79,12 +90,14 @@ export class PaystackController {
       const { accountId: userId } = req.user;
       const { cardId, amount } = req.body;
 
+      const amountInKobo = Number(amount) * 100;
+
       const foundAccount = await AccountServices.findAccount({ _id: userId });
 
       const data = {
         userId,
         cardId,
-        amount,
+        amount: String(amountInKobo),
         email: foundAccount.email,
       };
 
