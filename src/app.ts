@@ -17,7 +17,7 @@ import productSubCategoryRoutes from "./Modules/ProductSubCategory/productSubCat
 import productRoutes from "./Modules/Product/product.routes";
 import cartRoutes from "./Modules/Cart/cart.routes";
 import paymentRoutes from "./Modules/Payment/payment.routes";
-import wishlistRoutes from "./Modules/WishList/wishlist.routes";
+// import wishlistRoutes from "./Modules/WishList/wishlist.routes";
 import cardRoutes from "./Modules/Payment/Card/card.routes";
 
 const app: Application = express();
