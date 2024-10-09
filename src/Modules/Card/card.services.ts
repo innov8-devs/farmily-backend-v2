@@ -39,9 +39,4 @@ export default class CardServices {
 
     return "CARDS REMOVED SUCCESSFULLY";
   }
-
-  /**
-   * card id, user email, amount, then fetch authorization code using card id
-   */
-  public static async payWithSavedCard() {}
 }

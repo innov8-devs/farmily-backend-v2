@@ -14,12 +14,10 @@ export default class CardController {
         return sanitizedCard;
       });
 
-      return res
-        .status(200)
-        .json({
-          message: "data retrieved successfully.",
-          data: sanitizedResult,
-        });
+      return res.status(200).json({
+        message: "data retrieved successfully.",
+        data: sanitizedResult,
+      });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
