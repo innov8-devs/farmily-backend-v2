@@ -74,16 +74,6 @@ export class PaystackController {
     }
   }
 
-  public static async chargeAuthorization(req: Request, res: Response) {
-    try {
-      const data = req.body;
-      const charge = await PaystackServices.chargeAuthorization(data);
-      return res.status(200).json({ success: true, data: charge });
-    } catch (error) {
-      return res.status(500).json({ success: false, message: error.message });
-    }
-  }
-
   public static async payWithSavedCards(req: Request, res: Response) {
     try {
       const { accountId: userId } = req.user;

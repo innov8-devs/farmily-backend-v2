@@ -43,12 +43,6 @@ router.get(
 );
 
 router.post(
-  "/charge_authorization",
-  isAuthenticated,
-  PaystackController.chargeAuthorization
-);
-
-router.post(
   "/saved_card",
   isAuthenticated,
   PaystackController.payWithSavedCards
