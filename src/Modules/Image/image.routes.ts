@@ -31,4 +31,9 @@ router.put(
   ImageController.handleImageUpdate
 );
 
+router.get(
+  "/all",
+  ImageController.getAllImages
+);
+
 export default router

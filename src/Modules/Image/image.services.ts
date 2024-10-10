@@ -54,6 +54,13 @@ export class ImageServices {
     return isImageFound as IImage;
   }
 
+    public static async getAllImages(): Promise<IImage[]> {
+    const images = await ImageRepository.findMany({});
+
+    return images as IImage[];
+  }
+
+
   public static async handleImageUpdate(data: {
     foundImage: IImage;
     filePath: string;

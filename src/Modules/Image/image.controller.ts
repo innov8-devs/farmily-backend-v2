@@ -82,4 +82,16 @@ export class ImageController {
       return res.status(500).json({ message: "Failed to update image" });
     }
   }
+
+  public static async getAllImages(req: Request, res: Response) {
+    try {
+      const images = await ImageServices.getAllImages();
+
+      return res
+        .status(200)
+        .json({ message: "IMAGES RETRIEVED SUCCESSFULLY", images });
+    } catch (error) {
+      return res.status(500).json({ message: "Failed to retrieve images" });
+    }
+  }
 }
