@@ -48,12 +48,12 @@ export class ProductValidator {
 export const validateGetAllProducts = (data) => {
   const schema = Joi.object({
     category: Joi.string().custom(objectId).optional(),
-    subcategory: Joi.string().custom(objectId).optional(),
+    subCategory: Joi.string().custom(objectId).optional(),
     productSection: Joi.string().optional(),
     sort: Joi.number().valid(1, -1),
     pageSize: Joi.number().min(1).default(10),
     pageNumber: Joi.number().min(1).default(1),
-  }).or("subcategory", "productSection", "category");
+  }).or("subCategory", "productSection", "category");
 
   return schema.validate(data);
 };
