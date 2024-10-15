@@ -19,6 +19,12 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
     req.user = decoded;
     next();
   } catch (error) {
-    return res.status(401).json({ message: 'Invalid token' });
+    if (error.name === "TokenExpiredError") {
+      res.status(403).json({ message: "Token expired" });
+    } else if (error.name === "JsonWebTokenError") {
+      res.status(401).json({ message: "Invalid token" });
+    } else {
+      res.status(500).json({ message: "Server error. Try again." });
+    }
   }
 };
