@@ -10,6 +10,7 @@ export class ProductValidator {
     size: Joi.string().optional(),
     originalPrice: Joi.number().required(),
     discountPrice: Joi.number().optional(),
+    percentageDiscount: Joi.number().optional(),
     stockQty: Joi.number().min(0).required(),
     stockQtyAlert: Joi.number().min(0).optional(),
     isFeatured: Joi.boolean().optional(),
@@ -28,6 +29,7 @@ export class ProductValidator {
       size: Joi.string().optional(),
       originalPrice: Joi.number().optional(),
       discountPrice: Joi.number().optional(),
+      percentageDiscount: Joi.number().optional(),
       stockQty: Joi.number().min(0).optional(),
       stockQtyAlert: Joi.number().min(0).optional(),
       isFeatured: Joi.boolean().optional(),
@@ -69,5 +71,3 @@ export const validateRequest = (data: any, schema: Joi.Schema) => {
     );
   }
 };
-
-

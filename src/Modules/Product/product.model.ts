@@ -12,6 +12,7 @@ export interface IProductModel extends Document {
   size: string;
   originalPrice: number;
   discountPrice: number;
+  percentageDiscount: number;
   stockQty: number;
   stockQtyAlert: number;
   isFeatured: Boolean;
@@ -32,6 +33,7 @@ const productSchema = new Schema<IProductModel>(
     size: { type: String, index: true },
     originalPrice: { type: Number, index: true },
     discountPrice: { type: Number, index: true },
+    percentageDiscount: Number,
     stockQty: Number,
     stockQtyAlert: Number,
     isFeatured: Boolean,
