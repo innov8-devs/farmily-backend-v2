@@ -46,12 +46,12 @@ export class CartServices {
       }
     }
 
-    await CartRepository.updateOne(
+    const updatedCart = await CartRepository.updateOne(
       { _id: foundCustomer.cart._id },
       { items: foundCart.items }
     );
 
-    return "ADD TO CART SUCCESS";
+    return updatedCart;
   }
 
   public static async incrementOrDecrementProductQty(
@@ -77,12 +77,12 @@ export class CartServices {
       existingItem.quantity += quantity;
     }
 
-    await CartRepository.updateOne(
+    const updatedCart = await CartRepository.updateOne(
       { _id: foundCustomer.cart._id },
       { items: foundCart.items }
     );
 
-    return "PRODUCT QUANTITY UPDATED";
+    return updatedCart;
   }
 
   public static async addOrUpdateSpecialRequest(data) {
@@ -168,7 +168,10 @@ export class CartServices {
   }
 
   public static async getCart(filter: any): Promise<ICart> {
+    console.log("filter", filter)
     const foundCart = await CartRepository.findOne(filter);
+
+    console.log("foundCart", JSON.stringify(foundCart, null, 2))
 
     if (!foundCart) {
       throw new NotFoundException("CART NOT FOUND");

@@ -19,9 +19,9 @@ export class CartController {
       if (error)
         return res.status(400).json({ message: error.details[0].message });
 
-      const result = await CartServices.addProductToCart(data);
+      const cart = await CartServices.addProductToCart(data);
 
-      return res.status(200).json({ message: result });
+      return res.status(200).json({ message: "ADD TO CART SUCCESS", cart });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -41,9 +41,9 @@ export class CartController {
       if (error)
         return res.status(400).json({ message: error.details[0].message });
 
-      const result = await CartServices.incrementOrDecrementProductQty(data);
+      const cart = await CartServices.incrementOrDecrementProductQty(data);
 
-      return res.status(200).json({ message: result });
+      return res.status(200).json({ message: "PRODUCT QUANTITY UPDATED", cart });
     } catch (error) {
       res.status(500).json({ error });
     }
