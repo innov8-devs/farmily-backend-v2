@@ -52,6 +52,7 @@ export class ICustomerAccount {
   firstName: string;
   lastName: string;
   email: string;
+  phoneNumber: number;
   passwordChangedAt: Date;
   isVerified: boolean;
   isVerifiedAt: Date;
