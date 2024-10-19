@@ -8,6 +8,7 @@ export interface IAccountModel extends Document {
   phoneNumber: string;
   password: string;
   passwordChangedAt: Date;
+  emailChangedAt: Date;
   verificationToken: string;
   verificationTokenGeneratedAt: Date;
   isVerified: boolean;

@@ -22,6 +22,7 @@ import {
 } from "../../Shared/Exceptions";
 // import { ShoppingPreferencesServices } from '../../ShoppingPreference/Services';
 import { CartServices } from "../Cart/cart.services";
+import CardServices from "../Payment/Card/card.services";
 
 /**
  * Service class for handling customer services.
@@ -165,6 +166,7 @@ export default class CustomerServices {
       accountId: foundAccount._id,
       accountType: foundAccount.accountType,
       accountTypeId: foundAccount.accountTypeId,
+      role: foundAccount.role,
     });
 
     return token;
@@ -181,15 +183,11 @@ export default class CustomerServices {
     let decodedResetToken;
 
     if (foundAccount && foundAccount.resetToken) {
-
       try {
-
         decodedResetToken = TokenHelper.verifyResetToken(
           foundAccount.resetToken
         );
-
       } catch (error) {
-
         await AccountServices.updateAccount({ email: data.email }, null, {
           resetToken: 1,
         });
@@ -318,16 +316,6 @@ export default class CustomerServices {
     return createdAccount;
   }
 
-  //   public static async assignCartToCustomer(filter: any, cartId: any) {
-  //     const isAssigned = await CustomerRepository.updateOne(filter, { cartId });
-
-  //     if (isAssigned.matchedCount === 0)
-  //       return "The customer is not found!";
-
-  //     if (isAssigned.modifiedCount === 0)
-  //       return "The customer cart assigning process failed!"
-  //   }
-
   public static async getCustomerAccountDetails(
     givenAccountId: string
   ): Promise<ICustomerAccount> {
@@ -336,6 +324,7 @@ export default class CustomerServices {
       firstName,
       lastName,
       email,
+      phoneNumber,
       passwordChangedAt,
       isVerified,
       isVerifiedAt,
@@ -350,6 +339,7 @@ export default class CustomerServices {
       firstName,
       lastName,
       email,
+      phoneNumber,
       passwordChangedAt,
       isVerified,
       isVerifiedAt,
@@ -360,6 +350,33 @@ export default class CustomerServices {
       wishListId,
       cartId,
     };
+  }
+
+  public static async updateCustomerAccountDetails(data) {
+    const { firstName, lastName, email, phoneNumber, password, accountId } = data;
+
+    const foundAccount = await AccountServices.findAccount({
+      _id: data.accountId,
+    });
+
+    // For security purpose, delete all saved cards if email change
+    if (foundAccount.email !== email) {
+      await CardServices.removeAllCards(accountId);
+    }
+
+    const isPasswordValid = await HashHelper.verifyHash(
+      password,
+      foundAccount.password
+    );
+
+    if (!isPasswordValid) throw new ForbiddenException("Invalid credentials!");
+
+    const account = await AccountServices.updateAccount(
+      { _id: accountId },
+      { firstName, lastName, email, phoneNumber}
+    );
+
+    return account;
   }
 
   public static async getCustomerByCustomerId(

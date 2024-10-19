@@ -7,22 +7,49 @@ const router = Router();
 
 router.get("/verify/:verificationToken", CustomerController.verifyCustomer);
 router.get("/logout", isAuthenticated, CustomerController.logoutCustomer);
-router.get("/getCustomerAccountDetails", isAuthenticated, CustomerController.getCustomerAccountDetails);
+router.get(
+  "/getCustomerAccountDetails",
+  isAuthenticated,
+  CustomerController.getCustomerAccountDetails
+);
 
 router.post(
   "/signup",
-  AccountRateLimiter.signUpRateLimiter, CustomerController.signUpCustomer
+  AccountRateLimiter.signUpRateLimiter,
+  CustomerController.signUpCustomer
 );
 router.post(
   "/resend-verification-link",
-  AccountRateLimiter.resendVerificationRateLimiter, CustomerController.resendVerificationLink
+  AccountRateLimiter.resendVerificationRateLimiter,
+  CustomerController.resendVerificationLink
 );
-router.post("/login", AccountRateLimiter.loginRateLimiter, CustomerController.loginCustomer);
+router.post(
+  "/login",
+  AccountRateLimiter.loginRateLimiter,
+  CustomerController.loginCustomer
+);
 router.post(
   "/forget-password",
-  AccountRateLimiter.forgetPasswordRateLimiter, CustomerController.forgetCustomerPassword
+  AccountRateLimiter.forgetPasswordRateLimiter,
+  CustomerController.forgetCustomerPassword
 );
-router.post('/reset-password', CustomerController.resetCustomerPassword);
-router.post('/change-password', isAuthenticated, CustomerController.changeCustomerPassword);
+router.post("/reset-password", CustomerController.resetCustomerPassword);
+router.post(
+  "/change-password",
+  isAuthenticated,
+  CustomerController.changeCustomerPassword
+);
+
+router.put(
+  "/update-email",
+  isAuthenticated,
+  AccountRateLimiter.updateAccountEmailLimiter,
+  CustomerController.updateCustomerEmail
+);
+router.put(
+  "/update-account",
+  isAuthenticated,
+  CustomerController.updateCustomerAccount
+);
 
 export default router;

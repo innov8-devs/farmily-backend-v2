@@ -1,13 +1,16 @@
 import { IAccountModel } from "./account.model";
 import AccountRepository from "./account.repository";
 import { CreateAccountInput, CreateGoogleAccountInput } from "./accountTypes";
-import { NotFoundException, InternalServerException } from "../../Shared/Exceptions";
+import {
+  NotFoundException,
+  InternalServerException,
+  ForbiddenException,
+} from "../../Shared/Exceptions";
+import CardServices from "../Payment/Card/card.services";
+import HashHelper from "../../Shared/Helpers/hash.helper";
 
 export default class AccountServices {
-  public static async createAccount(
-    data: CreateAccountInput
-  ): Promise<any> {
-
+  public static async createAccount(data: CreateAccountInput): Promise<any> {
     const createdAccount = await AccountRepository.createOne(data);
 
     if (!createdAccount) return "ACCOUNT CREATION FAILED!";
@@ -21,9 +24,7 @@ export default class AccountServices {
     const createdAccount = await AccountRepository.createOne(data);
 
     if (!createdAccount)
-      throw new InternalServerException(
-        "ACCOUNT CREATION FAILED"
-      );
+      throw new InternalServerException("ACCOUNT CREATION FAILED");
 
     return createdAccount;
   }
@@ -41,11 +42,62 @@ export default class AccountServices {
 
     return updatedAccount;
   }
-  
+
+  public static async updateAccountDetails(data) {
+    const { firstName, lastName, phoneNumber, password, accountId } = data;
+
+    const foundAccount = await this.findAccount({
+      _id: data.accountId,
+    });
+
+    const isPasswordValid = await HashHelper.verifyHash(
+      password,
+      foundAccount.password
+    );
+
+    if (!isPasswordValid) throw new ForbiddenException("Invalid credentials!");
+
+    const account = await this.updateAccount(
+      { _id: accountId },
+      { firstName, lastName, phoneNumber }
+    );
+
+    return account;
+  }
+
+  public static async updateAccountEmail(data) {
+    const { email, password, accountId } = data;
+
+    const foundAccount = await this.findAccount({
+      _id: data.accountId,
+    });
+
+    // For security purpose, delete all saved cards if email changes
+    if (foundAccount.email !== email) {
+      await CardServices.removeAllCards(accountId);
+    }
+
+    const isPasswordValid = await HashHelper.verifyHash(
+      password,
+      foundAccount.password
+    );
+
+    if (!isPasswordValid) throw new ForbiddenException("Invalid credentials!");
+
+    // Later-Implement: Email verification
+
+    const account = await this.updateAccount(
+      { _id: accountId },
+      { email, emailChangedAt: new Date() }
+    );
+
+    return account;
+  }
+
   public static async findAccount(filter: any): Promise<any> {
     const foundAccount = await AccountRepository.findOne(filter);
 
-    if (!foundAccount) throw new NotFoundException('Invalid credentials!');
+    if (!foundAccount) throw new NotFoundException("Invalid credentials!");
 
     return foundAccount;
   }

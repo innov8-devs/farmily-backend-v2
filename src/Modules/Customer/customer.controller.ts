@@ -10,6 +10,11 @@ import {
   ResetCustomerPasswordInput,
 } from "./customerTypes";
 import { AccountValidator } from "../Account/account.validator";
+import AccountServices from "../Account/account.services";
+import {
+  BadRequestException,
+  ValidationException,
+} from "../../Shared/Exceptions";
 
 export default class CustomerController {
   public static async signUpCustomer(
@@ -130,7 +135,7 @@ export default class CustomerController {
   ): Promise<void> {
     try {
       const data: ResetCustomerPasswordInput = req.body;
-      
+
       const message = await CustomerServices.resetCustomerPassword(data);
       res.status(200).json({ message });
     } catch (error) {
@@ -162,17 +167,89 @@ export default class CustomerController {
     }
   }
 
-  /*
-
-  public static async createCustomerGoogleAccount(req: Request, res: Response): Promise<void> {
+  public static async updateCustomerAccount(
+    req: Request,
+    res: Response
+  ): Promise<void> {
     try {
-      const account = await CustomerServices.createCustomerGoogleAccount();
-      res.status(200).json(account);
+      const { firstName, lastName, phoneNumber } = req.body;
+
+      const { accountId } = req.user;
+
+      const { error } = AccountValidator.validateUpdateAccountDetails({
+        ...req.body,
+        accountId,
+      });
+
+      if (error) {
+        throw new BadRequestException(
+          error.details.map((x) => x.message).join(", ")
+        );
+      }
+
+      const foundAccount = await AccountServices.findAccount({
+        _id: accountId,
+      });
+
+      const data = {
+        firstName: firstName || foundAccount.firstName,
+        lastName: lastName || foundAccount.lastName,
+        phoneNumber: phoneNumber || foundAccount.phoneNumber,
+        password: req.body.password,
+        accountId,
+      };
+
+      const account = await AccountServices.updateAccountDetails(data);
+
+      const { password, ...sanitizedAccount } = account._doc;
+
+      res.status(200).json({
+        message: "CUSTOMER ACCOUNT UPDATED SUCCESSFULLY",
+        account: sanitizedAccount,
+      });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
- */
+
+  public static async updateCustomerEmail(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    try {
+      const { email } = req.body;
+
+      const { accountId } = req.user;
+
+      const { error } = AccountValidator.validateLogin({ ...req.body });
+
+      if (error) {
+        throw new ValidationException(
+          error.details.map((x) => x.message).join(", ")
+        );
+      }
+
+      const emailExists = await AccountServices.checkAccountPresence({ email });
+      if (emailExists) throw new ValidationException("EMAIL EXISTS");
+
+      const data = {
+        email,
+        password: req.body.password,
+        accountId,
+      };
+
+      const account = await AccountServices.updateAccountEmail(data);
+
+      const { password, verificationToken, ...sanitizedAccount } = account._doc;
+
+      res.status(200).json({
+        message: "EMAIL UPDATED SUCCESSFULLY",
+        account: sanitizedAccount,
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 
   public static async getCustomerAccountDetails(
     req: Request,
