@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { config } from '../../Config/app.config';
+import { appLogger } from '../../Shared/utils/logger';
 
 export default class MongoConnection {
   static async connect(): Promise<void> {
@@ -16,6 +17,6 @@ export default class MongoConnection {
       socketTimeoutMS: 90000,
     });
 
-    console.log('Successfully connected to MongoDB');
+    appLogger.info('Successfully connected to MongoDB');
   }
 }
