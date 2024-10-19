@@ -19,6 +19,7 @@ import cartRoutes from "./Modules/Cart/cart.routes";
 import paymentRoutes from "./Modules/Payment/payment.routes";
 // import wishlistRoutes from "./Modules/WishList/wishlist.routes";
 import cardRoutes from "./Modules/Payment/Card/card.routes";
+import orderRoutes from "./Modules/Order/order.routes";
 
 const app: Application = express();
 
@@ -64,5 +65,6 @@ app.use("/v2/carts", cartRoutes);
 app.use("/v2/payments", paymentRoutes);
 app.use("/v2/cards", cardRoutes);
 // app.use("/v2/wishlists", wishlistRoutes);
+app.use("/v2/orders", orderRoutes)
 
 export default app;
