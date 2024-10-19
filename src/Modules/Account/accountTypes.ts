@@ -42,6 +42,7 @@ export interface IDecodedToken {
   accountId?: string;
   accountType?: string;
   accountTypeId?: string;
+  role?: string,
   iat: number;
   exp: number;
 }
