@@ -92,18 +92,20 @@ export class ProductServices {
     return "The product category is unassigned from the product successfully!";
   }
 
-  public static async decrementProductQuantity(
+  public static async decrementProductStock(
     productId: string,
     quantity: number
   ) {
-    const isProductFound = await this.getProduct(productId);
+    const product = await this.getProduct(productId);
 
-    const isProductQuantityDecremented = await ProductRepository.updateOne(
+    if (!product) throw new NotFoundException("PRODUCT NOT FOUND");
+
+    const updatedProduct = await ProductRepository.updateOne(
       { _id: productId },
-      { quantity: isProductFound.stockQty - quantity }
+      { quantity: product.stockQty - quantity }
     );
 
-    return isProductQuantityDecremented;
+    return updatedProduct;
   }
 
   public static async getProduct(productId: string): Promise<IProduct> {
@@ -159,12 +161,19 @@ export class ProductServices {
   }
 
   public static async getAllProducts(query: any) {
-    const { pageNumber, pageSize, sort, subCategory, productSection, category } = query;
+    const {
+      pageNumber,
+      pageSize,
+      sort,
+      subCategory,
+      productSection,
+      category,
+    } = query;
     const skip = (pageNumber - 1) * pageSize;
 
     return await ProductRepository.findMany(
       {
-        $or: [{ subCategory }, {productSection}, {category}],
+        $or: [{ subCategory }, { productSection }, { category }],
       },
       { sort, skip, limit: pageSize, populate: ["image", "category"] }
     );
