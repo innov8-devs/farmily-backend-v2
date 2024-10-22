@@ -76,6 +76,10 @@ app.use("/v2/orders", orderRoutes);
 // app.use("/v2/wishlists", wishlistRoutes);
 
 // Image Upload
+app.get("/image-upload", (req, res) => {
+  res.sendFile(path.join(__dirname, "../src/public", "index.html"));
+});
+
 app.post(
   "/v2/images/upload",
   isAuthenticated,
