@@ -22,7 +22,8 @@ export class InitializeTransactionInput extends baseTransactionInput {
   metadata?: object;
 }
 
-export class chargeAuthorizationInput extends baseTransactionInput{
+export class chargeAuthorizationInput extends baseTransactionInput {
+  metadata?: object;
   authorization_code: string;
 }
 
@@ -31,4 +32,5 @@ export class payWithSavedCard {
   email: string;
   amount: string;
   userId: string;
+  orderId: string;
 }
