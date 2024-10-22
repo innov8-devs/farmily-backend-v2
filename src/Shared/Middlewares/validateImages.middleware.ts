@@ -7,16 +7,14 @@ export async function validateImages(
   next: NextFunction
 ) {
   
-  const files = req.files as
-    | Express.Multer.File[]
-    | { [fieldname: string]: Express.Multer.File[] };
+  const files = req.files
 
   if (!files || Object.keys(files).length === 0) {
     return res.status(400).json({ message: "No images uploaded" });
   }
 
   // Handle the case where files are an array or an object with field names
-  const fileArray: Express.Multer.File[] = Array.isArray(files)
+  const fileArray = Array.isArray(files)
     ? files
     : Object.values(files).flat();
 
