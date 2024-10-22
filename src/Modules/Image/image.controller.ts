@@ -1,25 +1,27 @@
 import { ImageServices } from "./image.services";
-import { AccountType } from "../Account/accountTypes";
 import { Request, Response } from "express";
 import { HandleImageUploadInput, IImage } from "./imageTypes";
+import path from "path";
 
 export class ImageController {
-  public static async uploadSingleImage(req: Request, res: Response) {
+
+  public static async uploadImage(req: Request, res: Response) {
     try {
-      const files = req.files as
-        | Express.Multer.File[]
-        | { [fieldname: string]: Express.Multer.File[] };
+      const files = req.files;
 
       // Ensure files is an array
       const images = Array.isArray(files) ? files : Object.values(files).flat();
 
+      // Manually construct the file path since we moved the files to 'uploads'
       const imageUploadPromises = images.map((image) => {
+        const uploadPath = path.join(__dirname, "../../uploads", image.name); // File was moved to this path
+
         return ImageServices.handleImageUpload({
-          path: image.path,
-          alt: image.filename.split(".")[0],
+          path: uploadPath,
+          alt: image.name.split(".")[0],
           accountType: req.accountType,
           accountTypeId: req.accountTypeId,
-        } as HandleImageUploadInput);
+        } as HandleImageUploadInput) ;
       });
 
       const uploadedImages: IImage[] = await Promise.all(imageUploadPromises);
@@ -31,41 +33,17 @@ export class ImageController {
     }
   }
 
-  public static async uploadMultipleImages(req: Request, res: Response) {
-    try {
-      const files = req.files as
-        | Express.Multer.File[]
-        | { [fieldname: string]: Express.Multer.File[] };
-
-      // Ensure files is an array
-      const images = Array.isArray(files) ? files : Object.values(files).flat();
-
-      const imageUploadPromises = images.map((image) => {
-        return ImageServices.handleImageUpload({
-          path: image.path,
-          alt: image.filename.split(".")[0],
-          accountType: req.accountType,
-          accountTypeId: req.accountTypeId,
-        } as HandleImageUploadInput);
-      });
-
-      const uploadedImages: IImage[] = await Promise.all(imageUploadPromises);
-
-      return res.status(200).json({ images: uploadedImages });
-    } catch (error) {
-      console.error({ error });
-      return res.status(500).json({ message: "Failed to upload images" });
-    }
-  }
-
   public static async handleImageUpdate(req: Request, res: Response) {
     try {
       const imageId = req.params.imageId;
-      const filePath = (req.files as Express.Multer.File[])[0].path;
+
+      const file = req.files[0] as any;
+
+      const filePath = path.join(__dirname, "../../uploads", file.name);
 
       const foundImage = await ImageServices.getImage({
         imageId,
-        accountType: req.accountType as AccountType,
+        accountType: req.accountType,
         accountTypeId: req.accountTypeId,
       });
 
