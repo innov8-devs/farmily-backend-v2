@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ImageServices } from "../../Modules/Image/image.services";
+import path from "path";
 
 export async function validateImages(
   req: Request,
@@ -21,22 +22,26 @@ export async function validateImages(
   const allowedImageTypes = ["image/jpeg", "image/png", "image/jpg"];
   for (const file of fileArray) {
     if (!allowedImageTypes.includes(file.mimetype)) {
-      await ImageServices.deleteImageFromDisk(file.path);
+      const uploadPath = path.join(__dirname, "../../uploads", file.name);
+      await ImageServices.deleteImageFromDisk(uploadPath);
+
       return res.status(400).json({
         message: "Invalid image file type. Allowed types: JPEG, PNG, JPG",
       });
     }
 
     // Check the file size for each file (you can adjust the maximum size as needed)
-    const maxFileSize = 5 * 1024 * 1024; // 5 MB
+    const maxFileSize = 2 * 1024 * 1024; // 2 MB
+
     if (file.size > maxFileSize) {
-      await ImageServices.deleteImageFromDisk(file.path);
+      const uploadPath = path.join(__dirname, "../../uploads", file.name);
+      await ImageServices.deleteImageFromDisk(uploadPath);
+
       return res.status(400).json({
-        error: "Image file size exceeds the maximum allowed size (5MB)",
+        error: "Image file size exceeds the maximum allowed size (2MB)",
       });
     }
   }
 
-  // If all checks pass, proceed to the next middleware
   next();
 }
