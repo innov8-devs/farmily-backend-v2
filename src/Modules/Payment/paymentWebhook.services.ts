@@ -1,3 +1,5 @@
+import { appLogger } from "../../Shared/utils/logger";
+import { OrderServices } from "../Order/order.services";
 import CardServices from "./Card/card.services";
 
 export class PaymentWebhookServices {
@@ -10,8 +12,9 @@ export class PaymentWebhookServices {
       transactionData.channel === "card" &&
       transactionData.metadata.action === "validate_card";
 
+    const orderId = transactionData.metadata.orderId;
+
     switch (eventType) {
-      
       case "charge.success":
         console.log(JSON.stringify(transactionData, null, 4));
 
@@ -28,10 +31,12 @@ export class PaymentWebhookServices {
           await CardServices.saveCard(cardDetails);
         }
 
+        if (orderId) await OrderServices.confirmOrder(orderId);
+
         break;
 
       default:
-        console.log(`Unhandled event type: ${eventType}`);
+        appLogger.error(`Unhandled event type: ${eventType}`);
         break;
     }
   }
