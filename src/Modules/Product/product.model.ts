@@ -17,12 +17,64 @@ export interface IProductModel extends Document {
   stockQtyAlert: number;
   isFeatured: Boolean;
   image: IImage;
+  cover: IImage[];
+  duration: string; // to cook meal(Mealkit)
+  servings: number;
+  calories: number;
+  ingredients: {
+    cover: IImage;
+    main: [
+      {
+        weight: string;
+        item: string;
+      }
+    ];
+    others: [
+      {
+        weight: string;
+        item: string;
+      }
+    ];
+  };
+  instructions: {
+    cover: IImage;
+    data: string;
+  };
   views: number;
   likes: number;
+  tags: string[];
   productSection: string;
   category: Schema.Types.ObjectId | IProductCategoryModel;
   subCategory: Schema.Types.ObjectId | IProductSubCategoryModel;
 }
+
+/**
+ * {
+  "images": [
+    {
+      "url": "https://res.cloudinary.com/farmily-production/image/upload/v1729643666/farmily/d2nnwvuzxdure9pbrauu.jpg",
+      "alt": "pork-ribs&sause",
+      "publicId": "farmily/d2nnwvuzxdure9pbrauu",
+      "_id": "6718449203647e36e4c78d6e",
+      "createdAt": "2024-10-23T00:34:26.775Z",
+      "updatedAt": "2024-10-23T00:34:26.775Z"
+    }
+  ]
+}
+
+{
+  "images": [
+    {
+      "url": "https://res.cloudinary.com/farmily-production/image/upload/v1729643784/farmily/zitaf6ds4hw1vplhpsig.jpg",
+      "alt": "pork-ribs",
+      "publicId": "farmily/zitaf6ds4hw1vplhpsig",
+      "_id": "6718450903647e36e4c78d70",
+      "createdAt": "2024-10-23T00:36:25.877Z",
+      "updatedAt": "2024-10-23T00:36:25.877Z"
+    }
+  ]
+}
+*/
 
 const productSchema = new Schema<IProductModel>(
   {
@@ -41,6 +93,42 @@ const productSchema = new Schema<IProductModel>(
       type: Schema.Types.ObjectId,
       ref: "Image",
     },
+    cover: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Image",
+      },
+    ],
+    duration: String, // to cook meal(Mealkit)
+    servings: Number,
+    calories: String,
+    ingredients: {
+      cover: {
+        type: Schema.Types.ObjectId,
+        ref: "Image",
+      },
+      main: [
+        {
+          quantity: String,
+          item: String,
+          _id: false,
+        },
+      ],
+      others: [
+        {
+          quantity: String,
+          item: String,
+          _id: false,
+        },
+      ],
+    },
+    instructions: {
+      cover: {
+        type: Schema.Types.ObjectId,
+        ref: "Image",
+      },
+      data: String,
+    },
     likes: {
       type: Number,
       default: 0,
@@ -49,6 +137,7 @@ const productSchema = new Schema<IProductModel>(
       type: Number,
       default: 0,
     },
+    tags: [String],
     productSection: String,
     category: {
       type: Schema.Types.ObjectId,

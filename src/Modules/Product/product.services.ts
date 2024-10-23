@@ -175,7 +175,7 @@ export class ProductServices {
       {
         $or: [{ subCategory }, { productSection }, { category }],
       },
-      { sort, skip, limit: pageSize, populate: ["image", "category"] }
+      { sort, skip, limit: pageSize, populate: ["image", "category", "cover", "instructions.cover", "ingredients.cover"] }
     );
   }
 
