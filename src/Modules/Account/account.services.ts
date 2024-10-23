@@ -94,8 +94,10 @@ export default class AccountServices {
     return account;
   }
 
-  public static async findAccount(filter: any): Promise<any> {
-    const foundAccount = await AccountRepository.findOne(filter);
+  public static async findAccount(filter: any, populate?: boolean): Promise<any> {
+    const foundAccount = populate
+      ? await AccountRepository.findOneAndPopulateAccountTypeId(filter)
+      : await AccountRepository.findOne(filter);
 
     if (!foundAccount) throw new NotFoundException("Invalid credentials!");
 

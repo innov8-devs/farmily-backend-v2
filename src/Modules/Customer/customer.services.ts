@@ -331,8 +331,8 @@ export default class CustomerServices {
       resetAt,
       accountType,
       provider,
-      accountTypeId: { _id: customerId, wishListId, cartId },
-    } = await AccountServices.findAccount({ _id: givenAccountId });
+      accountTypeId: { _id: customerId, wishList: wishListId, cart: cartId },
+    } = await AccountServices.findAccount({ _id: givenAccountId }, true);
 
     return {
       accountId,
