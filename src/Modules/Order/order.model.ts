@@ -48,6 +48,7 @@ export interface IOrderModel extends Document {
     date: Date;
     mode: DeliveryMode;
     status: DeliveryStatus;
+    instruction: string;
   };
   payment: {
     method: PaymentMethod;
@@ -84,6 +85,7 @@ const orderSchema = new Schema<IOrderModel>(
     },
     delivery: {
       date: Date,
+      instruction: String,
       mode: {
         type: String,
         default: DeliveryMode.To_Door,

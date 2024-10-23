@@ -19,6 +19,7 @@ class ShippingAddressInput {
 class DeliveryInput {
   deliverAt: Date;
   mode: DeliveryMode;
+  instruction: string;
 }
 
 class PaymentInput {
