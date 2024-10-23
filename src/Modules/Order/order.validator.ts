@@ -23,7 +23,7 @@ export const orderValidator = (data) => {
 
     delivery: Joi.object({
       deliverAt: Joi.date().iso().optional(),
-      instrution: Joi.string().optional(),
+      instruction: Joi.string().optional(),
       mode: Joi.string().valid("To_Door", "Pick_Up").required(),
     }).required(),
 
