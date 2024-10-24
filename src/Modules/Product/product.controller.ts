@@ -5,13 +5,13 @@ import {
   validateRequest,
   validateGetAllProducts,
 } from "./product.validator";
-validateGetAllProducts;
 export class ProductController {
   public static async createProduct(req: Request, res: Response) {
     try {
       validateRequest(req.body, ProductValidator.createProductSchema);
 
       const createdProduct = await ProductServices.createProduct(req.body);
+      
       res.status(201).json({
         message: "Product created successfully",
         data: createdProduct,
@@ -74,14 +74,14 @@ export class ProductController {
 
   public static async getProductSuggestions(req: Request, res: Response) {
     try {
-      const { query } = req.query;
+      const { q } = req.query;
 
-      if (!query) {
+      if (!q) {
         return res.status(400).json({ message: "Query parameter is required" });
       }
 
       const products = await ProductServices.getProductSuggestions(
-        query as string
+        q as string
       );
 
       return res.status(200).json({ message: "Success", data: products });

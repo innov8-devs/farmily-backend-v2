@@ -123,32 +123,31 @@ export class ProductServices {
   ): Promise<IProduct[]> {
     const matchedProducts = await ProductRepository.aggregate([
       {
-        $search: {
-          index: "autoCompleteSearchProduct",
-          text: {
-            query,
-            path: {
-              wildcard: "*",
-            },
-          },
+        $match: {
+          $or: [
+            { name: { $regex: `${query}`, $options: "i" } },
+            { tags: { $elemMatch: { $regex: `${query}`, $options: "i" } } },
+          ],
         },
       },
-      { $limit: 8 },
+      {
+        $limit: 10,
+      },
       {
         $project: {
           name: 1,
+          slug: 1,
           description: 1,
-          benefits: 1,
+          size: 1,
           originalPrice: 1,
           discountPrice: 1,
-          stockQty: 1,
+          percentageDiscount: 1,
+          productSection: 1,
+          duration: 1,
+          servings: 1,
           image: 1,
-          keywords: 1,
-          category: 1,
-          subCategory: 1,
-          discounts: 1,
-          brand: 1,
-          views: 1,
+          cover: 1,
+          tags: 1,
         },
       },
     ]);
@@ -203,8 +202,8 @@ export class ProductServices {
   ): Promise<IProduct[]> {
     const populateProducts = await ProductRepository.populate(
       products,
-      ["image", "category", "subCategory"],
-      ["Image", "ProductCategory", "ProductSubCategory"]
+      ["image", "cover", "category", "subCategory"],
+      ["Image", "Image", "ProductCategory", "ProductSubCategory"]
     );
 
     return populateProducts as IProduct[];
