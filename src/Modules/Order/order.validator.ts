@@ -32,3 +32,13 @@ export const orderValidator = (data) => {
 
   return schema.validate(data);
 };
+
+export const getAllProductsValidator = (data) => {
+  const schema = Joi.object({
+    sort: Joi.number().valid(1, -1),
+    pageSize: Joi.number().min(1).default(10),
+    pageNumber: Joi.number().min(1).default(1),
+  });
+
+  return schema.validate(data);
+};

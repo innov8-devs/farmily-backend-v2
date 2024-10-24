@@ -4,6 +4,7 @@ import { isAuthenticated } from "../../Shared/Middlewares/Account/isAuthenticate
 
 const router = Router();
 
+router.get("/all", isAuthenticated, OrderController.getAllOrdersByUser);
 router.get("/:orderId", isAuthenticated, OrderController.getOrderByUser);
 router.post("/place-order", isAuthenticated, OrderController.placeOrder);
 

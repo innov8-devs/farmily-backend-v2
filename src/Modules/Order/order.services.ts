@@ -53,6 +53,29 @@ export class OrderServices {
     return order;
   }
 
+  public static async getAllUserOrders(customerId, query) {
+    const {
+      pageNumber,
+      pageSize,
+      sort,
+    } = query;
+
+    const skip = (pageNumber - 1) * pageSize;
+
+    const order = await OrderRepository.findMany(
+      { customerId },
+      {
+        sort,
+        skip,
+        limit: pageSize,
+      }
+    );
+
+    if (!order) throw new NotFoundException("NO ORDER FOUND!");
+
+    return order;
+  }
+
   private static async hasAlreadyPlacedTheOrder(
     cartId: string
   ): Promise<void | ICartItem[]> {

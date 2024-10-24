@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { OrderServices } from "./order.services";
-import { orderValidator } from "./order.validator";
+import { getAllProductsValidator, orderValidator } from "./order.validator";
 
 export class OrderController {
   public static async placeOrder(req: Request, res: Response) {
@@ -37,6 +37,28 @@ export class OrderController {
       return res
         .status(200)
         .json({ message: "ORDER FETCHED SUCCESSFULLY", order });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  public static async getAllOrdersByUser(req: Request, res: Response) {
+    try {
+      const query = req.query;
+
+      const { accountTypeId: customerId } = req.user;
+
+      const { error } = getAllProductsValidator(query);
+
+      if (error)
+        return res.status(400).json({ message: error.details[0].message });
+      
+      const orders = await OrderServices.getAllUserOrders(customerId, query);
+
+      return res
+        .status(200)
+        .json({ message: "ORDERS FETCHED SUCCESSFULLY", orders });
+
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
