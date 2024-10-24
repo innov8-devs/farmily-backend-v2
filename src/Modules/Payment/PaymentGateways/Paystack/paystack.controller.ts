@@ -41,7 +41,7 @@ export class PaystackController {
   public static async initializeTransaction(req: Request, res: Response) {
     try {
       const { accountId: userId } = req.user;
-      const { amount, orderId } = req.body;
+      const { amount, orderId, callback_url } = req.body;
 
       const foundAccount = await AccountServices.findAccount({ _id: userId });
 
@@ -50,6 +50,7 @@ export class PaystackController {
       const data = {
         email: foundAccount.email,
         amount: String(amountInKobo),
+        callback_url,
         metadata: {
           orderId,
         }
@@ -91,7 +92,7 @@ export class PaystackController {
   public static async payWithSavedCards(req: Request, res: Response) {
     try {
       const { accountId: userId } = req.user;
-      const { cardId, amount, orderId } = req.body;
+      const { cardId, amount, orderId, callback_url } = req.body;
 
       const amountInKobo = Number(amount) * 100;
 
@@ -103,6 +104,7 @@ export class PaystackController {
         orderId,
         amount: String(amountInKobo),
         email: foundAccount.email,
+        callback_url,
       };
 
       const response = await PaystackServices.payWithSavedCard(data);

@@ -134,7 +134,7 @@ export class PaystackServices {
   }
 
   public static async payWithSavedCard(data: payWithSavedCard) {
-    const { userId, cardId, email, amount, orderId } = data;
+    const { userId, cardId, email, amount, orderId, callback_url } = data;
 
     const card = await CardRepository.findOne({
       _id: cardId,
@@ -146,6 +146,7 @@ export class PaystackServices {
       amount,
       authorization_code: card.authorizationCode,
       metadata: { orderId },
+      callback_url,
     });
 
     return response.data;

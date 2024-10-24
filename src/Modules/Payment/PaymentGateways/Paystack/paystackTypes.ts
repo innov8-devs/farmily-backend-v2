@@ -12,12 +12,12 @@ export class validateCustomerInput {
 export class baseTransactionInput {
   email: string;
   amount: string;
+  callback_url?: string;
 }
 
 export class InitializeTransactionInput extends baseTransactionInput {
   currency?: string;
   split_code?: string;
-  callback_url?: string;
   channel?: string[];
   metadata?: object;
 }
@@ -27,10 +27,9 @@ export class chargeAuthorizationInput extends baseTransactionInput {
   authorization_code: string;
 }
 
-export class payWithSavedCard {
+export class payWithSavedCard extends baseTransactionInput{
   cardId: string;
-  email: string;
-  amount: string;
   userId: string;
   orderId: string;
+  callback_url: string;
 }
