@@ -48,34 +48,6 @@ export interface IProductModel extends Document {
   subCategory: Schema.Types.ObjectId | IProductSubCategoryModel;
 }
 
-/**
- * {
-  "images": [
-    {
-      "url": "https://res.cloudinary.com/farmily-production/image/upload/v1729643666/farmily/d2nnwvuzxdure9pbrauu.jpg",
-      "alt": "pork-ribs&sause",
-      "publicId": "farmily/d2nnwvuzxdure9pbrauu",
-      "_id": "6718449203647e36e4c78d6e",
-      "createdAt": "2024-10-23T00:34:26.775Z",
-      "updatedAt": "2024-10-23T00:34:26.775Z"
-    }
-  ]
-}
-
-{
-  "images": [
-    {
-      "url": "https://res.cloudinary.com/farmily-production/image/upload/v1729643784/farmily/zitaf6ds4hw1vplhpsig.jpg",
-      "alt": "pork-ribs",
-      "publicId": "farmily/zitaf6ds4hw1vplhpsig",
-      "_id": "6718450903647e36e4c78d70",
-      "createdAt": "2024-10-23T00:36:25.877Z",
-      "updatedAt": "2024-10-23T00:36:25.877Z"
-    }
-  ]
-}
-*/
-
 const productSchema = new Schema<IProductModel>(
   {
     name: { type: String, index: true },
